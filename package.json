@@ -13,20 +13,6 @@
   "scripts": {
     "release": "release-it"
   },
-  "plugins": {
-    "@grupoboticario/news-fragments": {
-      "fragmentsTypes": [
-        {
-          "title": "Features",
-          "extension": "feature"
-        },
-        {
-          "title": "Bugfixes",
-          "extension": "bugfix"
-        }
-      ]
-    }
-  },
   "release-it": {
     "github": {
       "release": true
@@ -34,6 +20,20 @@
     "npm": {
       "publish": false,
       "release": false
+    },
+    "plugins": {
+      "@grupoboticario/news-fragments": {
+        "fragmentsTypes": [
+          {
+            "title": "Features",
+            "extension": "feature"
+          },
+          {
+            "title": "Bugfixes",
+            "extension": "bugfix"
+          }
+        ]
+      }
     }
   }
 }
