@@ -4,7 +4,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = var.aws_region
 }
 
 ##########################################
@@ -14,6 +14,18 @@ provider "aws" {
 variable "global_environment_name" {
   description = "A globally unique environment name for S3 buckets."
   type        = string
+}
+
+variable "aws_region" {
+  description = "The AWS region in which to place the resources."
+  type = string
+  default = "us-west-2"
+}
+
+variable "wandb_version" {
+  description = "The version of wandb to deploy."
+  type = string
+  default = "0.9.30"
 }
 
 ##########################################
@@ -381,7 +393,7 @@ resource "aws_s3_bucket" "file_storage" {
 
   cors_rule {
     allowed_headers = ["*"]
-    allowed_methods = ["GET", "HEAD"]
+    allowed_methods = ["GET", "HEAD", "PUT"]
     allowed_origins = ["*"]
     expose_headers  = ["ETag"]
     max_age_seconds = 3000
@@ -530,7 +542,7 @@ spec:
             - name: MYSQL
               value: mysql://wandb:wandb_root_password@${aws_rds_cluster_instance.metadata_store.endpoint}/wandb_local
           imagePullPolicy: Always
-          image: wandb/local:latest
+          image: wandb/local:${var.wandb_version}
           ports:
             - name: http
               containerPort: 8080
