@@ -1,0 +1,4 @@
+*.tfstate*
+.terraform
+kubeconfig.yaml
+wandb.yaml
