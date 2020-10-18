@@ -26,25 +26,25 @@ class WandbPlugin extends Plugin {
 
   async defaultNotes() {
     if (this.options.legacy) {
-      // TODO: version
+      const version = this.getContext("version")
       const res = await this.octokit.repos.getReleaseByTag({
         owner: 'wandb',
         repo: 'core',
-        tag: 'local/v0.9.4',
+        tag: `local/v${version}`,
       });
       this.setContext({date: new Date(res.data.published_at)});
       return res.data.body;
     } else {
       this.setContext({date: new Date()});
-      // TODO: latestVersion
+      const latestVersion = this.getContext("latestVersion")
       let res = await this.octokit.repos.getReleaseByTag({
         owner: 'wandb',
         repo: 'core',
-        tag: 'local/v0.9.30',
+        tag: `local/v${latestVersion}`,
       });
       const lastReleaseSHA = res.data.target_commitish;
       const publishedAt = res.data.published_at;
-      console.log('Grabbing all commits from since', publishedAt, lastReleaseSHA);
+      console.log('Grabbing all commits since', publishedAt, lastReleaseSHA);
       res = await this.octokit.repos.listCommits({
         owner: 'wandb',
         repo: 'core',
