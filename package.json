@@ -7,32 +7,27 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@grupoboticario/news-fragments": "^1.7.0",
+    "@octokit/rest": "^18.0.6",
     "release-it": "^14.1.0"
   },
   "scripts": {
     "release": "release-it"
   },
   "release-it": {
+    "git": {
+      "requireCleanWorkingDir": false
+    },
     "github": {
-      "release": true
+      "release": true,
+      "releaseNotes": "cat staging/RELEASE.md"
     },
     "npm": {
       "publish": false,
       "release": false
     },
     "plugins": {
-      "@grupoboticario/news-fragments": {
-        "fragmentsTypes": [
-          {
-            "title": "Features",
-            "extension": "feature"
-          },
-          {
-            "title": "Bugfixes",
-            "extension": "bugfix"
-          }
-        ]
+      "./plugins/release.js": {
+        "legacy": false
       }
     }
   }
