@@ -103,7 +103,6 @@ class WandbPlugin extends Plugin {
       enabled: true,
       task: (notes) => {
         this.setContext({notes});
-        console.log('CTX', this.getContext());
         this.saveReleaseNotesToFile('staging/RELEASE.md', notes);
         this.saveChangelogToFile(
           'CHANGELOG.md',
