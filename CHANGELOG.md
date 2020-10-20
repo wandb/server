@@ -1,3 +1,12 @@
+## wandb/local:0.9.23 (August 4, 2020)
+
+* Google cloud external buckets 
+* Settings are not over written when clicking "Set frontend host"
+* Frontend console logs in debug bundles
+* Reporting comments and general improvements
+* Private report sharing
+
+
 ## wandb/local:0.9.22 (July 27, 2020)
 
 * Admin interface works properly in Safari
