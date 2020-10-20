@@ -24,19 +24,29 @@ class WandbPlugin extends Plugin {
     });
   }
 
-  async defaultNotes() {
+  defaultNotes() {
+    return this.getContext("notes");
+  }
+
+  bump(version) {
+    this.setContext({version});
+  }
+
+  async getChangelog(latestVersion) {
+    this.setContext({latestVersion});
     if (this.options.legacy) {
-      const version = this.getContext("version")
+      const versionParts = latestVersion.split(".").map((v) => parseInt(v, 10))
+      versionParts[2] += 1
+      const version = versionParts.join(".")
       const res = await this.octokit.repos.getReleaseByTag({
         owner: 'wandb',
         repo: 'core',
         tag: `local/v${version}`,
       });
-      this.setContext({date: new Date(res.data.published_at)});
+      this.setContext({date: new Date(res.data.published_at), notes: res.data.body});
       return res.data.body;
     } else {
       this.setContext({date: new Date()});
-      const latestVersion = this.getContext("latestVersion")
       let res = await this.octokit.repos.getReleaseByTag({
         owner: 'wandb',
         repo: 'core',
@@ -58,16 +68,9 @@ class WandbPlugin extends Plugin {
       const notes = res.data
         .map((commit) => `* ${commit.commit.message.split('\n')[0]}`)
         .join('\n');
+      this.setContext({notes})
       return notes;
     }
-  }
-
-  bump(version) {
-    this.setContext({version});
-  }
-
-  getChangelog(latestVersion) {
-    this.setContext({latestVersion});
   }
 
   saveChangelogToFile(filePath, renderedTemplate) {
