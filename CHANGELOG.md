@@ -1,3 +1,13 @@
+## wandb/local:0.9.22 (July 27, 2020)
+
+* Admin interface works properly in Safari
+* Handle crashing expression editor
+* Improved team / org management
+* Report comments and images in markdown
+
+> NOTE: There's a large data migration in this release that migrates files from an int to bigint primary key to allow for more file records.  This migration takes ~5 seconds per 1 million file records so could result in some downtime during the rollover.
+
+
 ## wandb/local:0.9.21 (July 7, 2020)
 
 * s3 file store updates would loop infinitely from SQS events
