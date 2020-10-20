@@ -1,3 +1,12 @@
+## wandb/local:0.9.5 (February 20, 2020)
+
+* New loading screen
+* Better validation for auth0 setup
+* New more robust startup script
+* Fixed cron jobs
+* Auto set tls=preferred for external mysql
+
+
 ## wandb/local:0.9.4 (February 13, 2020)
 
 * First official release from the new build system
