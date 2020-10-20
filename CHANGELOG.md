@@ -1,3 +1,9 @@
+## wandb/local:0.9.17 (June 5, 2020)
+
+* Forgot password emails and password reset link generation
+* Support for artifacts!
+
+
 ## wandb/local:0.9.16 (May 26, 2020)
 
 * Emails now sent directly from local
