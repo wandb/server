@@ -1,3 +1,8 @@
+## wandb/local:0.9.7 (February 26, 2020)
+
+* Fixes cron jobs
+
+
 ## wandb/local:0.9.6 (February 24, 2020)
 
 * Fixes sweep server
