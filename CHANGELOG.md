@@ -1,3 +1,13 @@
+## wandb/local:0.9.19 (July 1, 2020)
+
+* Artifact UI improvements including deletion and multi-zoned buckets
+* Artifact downloads now work properly in local
+* No more onboarding UI
+* Performance improvements for Vega rendering
+* Report interface polish and improvements
+* Charting improvements and polish
+
+
 ## wandb/local:0.9.18 (June 12, 2020)
 
 * New advanced Bar Chart options for std-dev, and error bars
