@@ -1,3 +1,22 @@
+## wandb/local:0.9.30 (October 14, 2020)
+
+* Enabled exporting panels to different report sections
+* Fixed artifact header names
+* New [custom charts](https://wandb.ai/wandb/posts/reports/The-W-B-Machine-Learning-Visualization-IDE--VmlldzoyNjk3Nzg)!
+* We now show all x-axis labels in charts
+* Fixed sporadic image not available errors in media panels when runs are in progress
+* Better graphql type checking for api requests
+* The table now supports sorting by multiple columns!
+* Sweeps now have an early-stopping column when enabled
+* The collapsed state of groups is now persisted across page loads
+* Line plot CSV export now contains min and max values for grouped metrics
+* Searching panels is more performant
+* Added bounding box artifact visualization
+* New storage stats table backend for exposing storage usage, UI coming in the next release
+* Properly escape file paths when using a Minio storage backend
+* Ensure the current user maintains admin status when connecting an external MySQL store
+
+
 ## wandb/local:0.9.29 (October 6, 2020)
 
 * Fixed bug that prevented some users from logging in when using Auth0 authentication
