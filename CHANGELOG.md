@@ -1,3 +1,12 @@
+## wandb/local:0.9.24 (September 3, 2020)
+
+* New Artifacts backend changes
+* Private report link sharing
+* Improved report comments
+* Better support for ENV var settings
+* Custom Panels with new graphql query UI's
+
+
 ## wandb/local:0.9.23 (August 4, 2020)
 
 * Google cloud external buckets 
