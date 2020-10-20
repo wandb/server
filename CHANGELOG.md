@@ -1,3 +1,13 @@
+## wandb/local:0.9.18 (June 12, 2020)
+
+* New advanced Bar Chart options for std-dev, and error bars
+* Restore deleted users via the user admin api
+* Configure local instances programmatically using environment variables.
+* Fix wandb.HTML rendering issues inside of wandb/local
+* Fix flagging users as admin when reconfiguring the database
+* Report UI improvements
+
+
 ## wandb/local:0.9.17 (June 5, 2020)
 
 * Forgot password emails and password reset link generation
