@@ -18,7 +18,8 @@
       "requireCleanWorkingDir": false
     },
     "github": {
-      "release": true
+      "release": true,
+      "releaseNotes": "cat ./staging/RELEASE.md"
     },
     "npm": {
       "publish": false,

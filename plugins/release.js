@@ -106,7 +106,7 @@ class WandbPlugin extends Plugin {
       enabled: true,
       task: (notes) => {
         this.setContext({notes});
-        // this.saveReleaseNotesToFile('staging/RELEASE.md', notes);
+        this.saveReleaseNotesToFile('staging/RELEASE.md', notes);
         this.saveChangelogToFile(
           'CHANGELOG.md',
           `## wandb/local:${this.getContext(
