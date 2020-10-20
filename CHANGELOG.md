@@ -1,3 +1,10 @@
+## wandb/local:0.9.21 (July 7, 2020)
+
+* s3 file store updates would loop infinitely from SQS events
+* error logs weren't being written to disk
+* Multiple agents caused sweeps to crash
+
+
 ## wandb/local:0.9.20 (July 6, 2020)
 
 * This release primarily fixes an issue with users upgrading from v0.9.16.
