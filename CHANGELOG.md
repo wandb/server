@@ -1,3 +1,11 @@
+## wandb/local:0.9.13 (April 21, 2020)
+
+* The api properly restarts when settings change
+* Improvements to report saving
+* W&B now supports wandb.scikit and wandb.plots
+* fixes an issues with local instances deployed to DNS with `app.` in the url
+
+
 ## wandb/local:0.9.12 (April 14, 2020)
 
 * We now run the container as non-root by default
