@@ -1,3 +1,16 @@
+## wandb/local:0.9.29 (October 6, 2020)
+
+* Fixed bug that prevented some users from logging in when using Auth0 authentication
+* Fixed bug where elements in SVG exports would render twice
+* Fixed various bugs in custom visualization system
+* Hide popups in custom visualization editor when the page is scrolled
+* Various frontend performance improvements
+* Warn on slow queries in custom visualization system
+* Fixed bug where some data would still show after unselecting all runs
+* Performance improvements for reports
+* Add ability to choose where in a report a panel will land when exporting from a workspace
+
+
 ## wandb/local:0.9.28 (October 1, 2020)
 
 * In the browser, hide the full API key when authorizing a new client or viewing keys on settings page
