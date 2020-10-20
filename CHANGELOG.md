@@ -1,3 +1,11 @@
+## wandb/local:0.9.16 (May 26, 2020)
+
+* Emails now sent directly from local
+* New frontend host settings to ensure links in emails are valid
+* No longer depend on external google fonts
+* Improved testing / QA process
+
+
 ## wandb/local:0.9.15 (May 12, 2020)
 
 * Fixes initial admin user flagging
