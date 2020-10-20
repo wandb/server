@@ -77,7 +77,7 @@ class WandbPlugin extends Plugin {
     const fileDescriptor = fs.openSync(filePath, 'a+');
 
     const oldData = fs.readFileSync(filePath);
-    const newData = new Buffer.from(renderedTemplate);
+    const newData = new Buffer.from(renderedTemplate.split("\r\n").join("\n"));
 
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.writeSync(fileDescriptor, oldData, 0, oldData.length, newData.length);
@@ -87,7 +87,7 @@ class WandbPlugin extends Plugin {
 
   saveReleaseNotesToFile(filePath, notes) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
-    const newData = new Buffer.from(notes);
+    const newData = new Buffer.from(notes.split("\r\n").join("\n"));
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.closeSync(fileDescriptor);
   }
