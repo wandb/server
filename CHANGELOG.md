@@ -1,3 +1,20 @@
+## wandb/local:0.9.25 (September 11, 2020)
+
+* Support for client version querying
+* Redacted sensitive environment variables from logs
+* Images render in Jupyter notebook previews
+* Prevented metadata update loops for external file storage configurations
+* Custom chart configuration improvements
+* Support for dynamic hosts to serve the api and UI from different urls
+* Artifact reference linking
+* Move panels between grids in reports
+* JobType can be added to run tables
+* CSV Export contains only visible columns
+* Artifacts support pagination
+* Sweep config improvements
+* Auth0 library updates
+
+
 ## wandb/local:0.9.24 (September 3, 2020)
 
 * New Artifacts backend changes
