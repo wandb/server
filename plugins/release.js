@@ -109,7 +109,7 @@ class WandbPlugin extends Plugin {
         this.saveReleaseNotesToFile('staging/RELEASE.md', notes);
         this.saveChangelogToFile(
           'CHANGELOG.md',
-          `# wandb/local:${this.getContext(
+          `## wandb/local:${this.getContext(
             'version'
           )} - ${this.getFormattedDate()}\n\n${notes}\n\n`
         );
