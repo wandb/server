@@ -1,3 +1,10 @@
+## wandb/local:0.9.15 (May 12, 2020)
+
+* Fixes initial admin user flagging
+* Increases the default session length to 1 week.
+* Code saving is enabled by default.
+
+
 ## wandb/local:0.9.14 (May 7, 2020)
 
 * New user management UI
