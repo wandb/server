@@ -1,3 +1,8 @@
+## wandb/local:0.9.20 (July 6, 2020)
+
+* This release primarily fixes an issue with users upgrading from v0.9.16.
+
+
 ## wandb/local:0.9.19 (July 1, 2020)
 
 * Artifact UI improvements including deletion and multi-zoned buckets
