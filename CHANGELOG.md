@@ -1,3 +1,10 @@
+## wandb/local:0.9.8 (March 3, 2020)
+
+* Ensures local works offline
+* Fixes minio redis event streaming
+* Disables teams with no license
+
+
 ## wandb/local:0.9.7 (February 26, 2020)
 
 * Fixes cron jobs
