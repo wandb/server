@@ -1,3 +1,10 @@
+## wandb/local:0.9.14 (May 7, 2020)
+
+* New user management UI
+* admins only get access to management UI's
+* Benchmarks enabled
+
+
 ## wandb/local:0.9.13 (April 21, 2020)
 
 * The api properly restarts when settings change
