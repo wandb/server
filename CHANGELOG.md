@@ -1,3 +1,10 @@
+## wandb/local:0.9.11 (April 3, 2020)
+
+* Fixes panics in Azure
+* Makes images uploads work in azure
+* New file metadata service
+
+
 ## wandb/local:0.9.10 (March 24, 2020)
 
 * Fixes new user emails
