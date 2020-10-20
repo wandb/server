@@ -1,3 +1,20 @@
+## wandb/local:0.9.26 (September 17, 2020)
+
+* Fixed panic during artifact uploads
+* Fixed history scan panic
+* Supports v2 artifacts which are created by 0.10.X python clients
+* Support rendering dev and rc versions of python clients in the UI
+* Custom chart UI improvments
+* Support default region for artifacts
+* Fixed artifact download links from python clients
+* Added name to the report creation dialogue
+* Improved frontend error message design
+* General plot improvements
+* Add artifact aliases from the UI
+* Custom charts support run colors
+* Remove chart options on the individual run page
+
+
 ## wandb/local:0.9.25 (September 11, 2020)
 
 * Support for client version querying
