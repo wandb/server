@@ -1,3 +1,10 @@
+## wandb/local:0.9.10 (March 24, 2020)
+
+* Fixes new user emails
+* Adds caching to frontend assets
+* Don't load Auth0 when not needed
+
+
 ## wandb/local:0.9.9 (March 20, 2020)
 
 * Fixed user invites

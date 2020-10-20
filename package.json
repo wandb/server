@@ -1,6 +1,6 @@
 {
   "name": "local",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "description": "W&B Local is the self hosted version of Weights & Biases",
   "repository": "git@github.com:wandb/local.git",
   "author": "Chris Van Pelt <vanpelt@wandb.com>",
@@ -24,6 +24,9 @@
     "npm": {
       "publish": false,
       "release": false
+    },
+    "hooks": {
+      "before:init": "rm -rf ./staging/RELEASE.md"
     },
     "plugins": {
       "./plugins/release.js": {
