@@ -198,13 +198,52 @@ resource "aws_iam_role_policy_attachment" "wandb_node_registry_policy" {
   role       = aws_iam_role.wandb_node_role.name
 }
 
+resource "aws_iam_policy" "wandb_node_s3_policy" {
+  name        = "wandb-node-s3-policy"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+        "Effect": "Allow",
+        "Action": "s3:*",
+        "Resource": [
+          "${aws_s3_bucket.file_storage.arn}",
+          "${aws_s3_bucket.file_storage.arn}/*"
+        ]
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "wandb_node_s3_policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+  policy_arn = aws_iam_policy.wandb_node_s3_policy.arn
   role       = aws_iam_role.wandb_node_role.name
 }
 
+resource "aws_iam_policy" "wandb_node_sqs_policy" {
+  name        = "wandb-node-sqs-policy"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+        "Effect": "Allow",
+        "Action": "sqs:*",
+        "Resource": [
+          "${aws_sqs_queue.file_metadata.arn}"
+        ]
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "wandb_node_sqs_policy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+  policy_arn = aws_iam_policy.wandb_node_sqs_policy.arn
   role       = aws_iam_role.wandb_node_role.name
 }
 
@@ -334,8 +373,8 @@ data "aws_iam_policy_document" "file_metadata_queue_policy" {
     resources = [aws_sqs_queue.file_metadata.arn]
 
     principals {
-      type        = "AWS"
-      identifiers = ["*"]
+      type        = "Service"
+      identifiers = ["sns.amazonaws.com"]
     }
 
     condition {
