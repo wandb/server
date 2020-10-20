@@ -3,3 +3,5 @@
 kubeconfig.yaml
 wandb.yaml
 *.tfvars
+node_modules
+staging/*
