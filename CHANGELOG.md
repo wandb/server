@@ -1,3 +1,12 @@
+## wandb/local:0.9.9 (March 20, 2020)
+
+* Fixed user invites
+* Fixed version check
+* Pretty login page
+* Test improvements
+* The last 17 days of product improvements.
+
+
 ## wandb/local:0.9.8 (March 3, 2020)
 
 * Ensures local works offline
