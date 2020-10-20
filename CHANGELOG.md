@@ -1,3 +1,16 @@
+## wandb/local:0.9.28 (October 1, 2020)
+
+* In the browser, hide the full API key when authorizing a new client or viewing keys on settings page
+* Fixed a rare bug causing inaccurate aggregations on config and summary values
+* Added the ability to send notifications to an external service
+* Fixed an infinite update loop that could consume excessive resources when using S3
+* Improved UI performance when attaching notes to a runset
+* Improved performance on some run queries
+* Added support for Markdown links with arbitrary text
+* Fixed a bug that caused some runs to be excluded from the parallel coordinates chart
+* Added close button to fullscreen view for panels
+
+
 ## wandb/local:0.9.27 (September 24, 2020)
 
 * In history panels, added ability to group runs over metrics.
