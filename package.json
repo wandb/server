@@ -30,7 +30,7 @@
     },
     "plugins": {
       "./plugins/release.js": {
-        "legacy": true
+        "legacy": false
       }
     }
   }
