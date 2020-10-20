@@ -1,3 +1,10 @@
+## wandb/local:0.9.12 (April 14, 2020)
+
+* We now run the container as non-root by default
+* OpenShift usage now supported.
+* We've also enable the ability to record statsd information locally.
+
+
 ## wandb/local:0.9.11 (April 3, 2020)
 
 * Fixes panics in Azure
