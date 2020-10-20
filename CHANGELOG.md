@@ -1,3 +1,9 @@
+## wandb/local:0.9.6 (February 24, 2020)
+
+* Fixes sweep server
+* UI Updates
+
+
 ## wandb/local:0.9.5 (February 20, 2020)
 
 * New loading screen
