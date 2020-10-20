@@ -1,3 +1,17 @@
+## wandb/local:0.9.27 (September 24, 2020)
+
+* In history panels, added ability to group runs over metrics.
+* In history panels, improved usability axes.
+* Fixed an issue where certain types of logged tables caused a page crash.
+* Improved frontend performance in heavy workspaces and reports.
+* Added backend support for custom panels logged via CLI (CLI support pending).
+* Fixed a bug with artifact reference tracking.
+* Improved run metric cache behavior.
+* Fixed a bug with user management.
+* Removed cookies from logs
+* Fixed restart command and version upgrade logic in the settings app
+
+
 ## wandb/local:0.9.26 (September 17, 2020)
 
 * Fixed panic during artifact uploads
