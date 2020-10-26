@@ -19,6 +19,12 @@ variable "db_password" {
   type        = string
 }
 
+variable "wandb_version" {
+  description = "The version of wandb to deploy."
+  type        = string
+  default     = "0.9.30"
+}
+
 
 module "infra" {
   source = "./infra"
@@ -31,6 +37,7 @@ module "kube" {
   source = "./kube"
 
   license                    = var.license
+  wandb_version              = var.wandb_version
   kube_cluster_endpoint      = module.infra.eks_cluster_endpoint
   kube_cert_data             = module.infra.eks_cert_data
   file_storage_bucket_name   = module.infra.s3_bucket_name

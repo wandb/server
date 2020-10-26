@@ -27,7 +27,6 @@ variable "license" {
 variable "wandb_version" {
   description = "The version of wandb to deploy."
   type        = string
-  default     = "0.9.30"
 }
 
 variable "kube_cluster_endpoint" {
