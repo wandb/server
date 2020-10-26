@@ -42,6 +42,10 @@ If you'd like to run all the terraform steps in one go, you can use our included
 ```
 ./install_wandb.sh
 ```
+
+## (IMPORTANT!) Save TF State
+After install, terraform will generate a `terraform.tfstate` file. It is *extremely* important that you do not lose this file. Without this state file, you will no longer be able to manager your W&B install with terraform. `terraform.tfstate` must be present in your working directory whenever you run any terraform commands. We recommend backing this file up to a well known location.
+
 ## Cluster Administration
 After install, this terraform stack will output a `kubeconfig.yaml` file you can use to administer the cluster. Once the cluster is done installing, try running the following command to see pod status:
 ```
