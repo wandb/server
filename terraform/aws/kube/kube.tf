@@ -116,7 +116,7 @@ resource "kubernetes_deployment" "wandb" {
           }
           env {
             name  = "MYSQL"
-            value = "mysql://wandb:wandb_root_password@${var.database_endpoint}/wandb_local"
+            value = "mysql://${var.database_endpoint}"
           }
 
           port {

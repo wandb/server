@@ -22,6 +22,11 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
+variable "db_password" {
+  description = "Password for the database instance. NOTE: Database is not publicly accessible by default."
+  type        = string
+}
+
 ##########################################
 # Data
 ##########################################
@@ -493,7 +498,7 @@ resource "aws_rds_cluster" "metadata_cluster" {
 
   database_name   = "wandb_local"
   master_username = "wandb"
-  master_password = "wandb_root_password"
+  master_password = var.db_password
 
   vpc_security_group_ids = [aws_security_group.metadata_store.id]
 
@@ -508,8 +513,8 @@ resource "aws_rds_cluster_instance" "metadata_store" {
   db_subnet_group_name = aws_db_subnet_group.metadata_subnets.name
 }
 
-output "rds_cluster_endpoint" {
-  value = aws_rds_cluster_instance.metadata_store.endpoint
+output "rds_connection_string" {
+  value = "wandb:${var.db_password}@${aws_rds_cluster_instance.metadata_store.endpoint}/wandb_local"
 }
 
 resource "aws_security_group" "metadata_store" {

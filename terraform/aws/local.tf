@@ -13,10 +13,18 @@ variable "license" {
   type        = string
 }
 
+variable "db_password" {
+  description = "Password for the database instance. NOTE: Database is not publicly accessible by default."
+  default     = "wandb_root_password"
+  type        = string
+}
+
+
 module "infra" {
   source = "./infra"
 
   global_environment_name = var.global_environment_name
+  db_password             = var.db_password
 }
 
 module "kube" {
@@ -28,7 +36,7 @@ module "kube" {
   file_storage_bucket_name   = module.infra.s3_bucket_name
   file_storage_bucket_region = module.infra.s3_bucket_region
   file_metadata_queue_name   = module.infra.sqs_queue_name
-  database_endpoint          = module.infra.rds_cluster_endpoint
+  database_endpoint          = module.infra.rds_connection_string
 }
 
 output "url" {
