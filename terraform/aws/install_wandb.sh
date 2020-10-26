@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script runs all the necessary terraform commands for you.
-set -e`
+set -e
 
 if [ ! -e ".terraform" ]; then
   terraform init
