@@ -21,6 +21,12 @@ class WandbPlugin extends Plugin {
         default: this.defaultNotes.bind(this),
         message: () => "Let's edit the release notes.",
       },
+      release_to_core: {
+        type: 'confirm',
+        name: 'release_to_core',
+        message:
+          "Let's create a release in core to trigger the push to dockerhub",
+      },
     });
   }
 
@@ -129,16 +135,21 @@ class WandbPlugin extends Plugin {
   }
 
   async release() {
-    if (!this.options.legacy) {
-      await this.octokit.repos.createRelease({
-        owner: 'wandb',
-        repo: 'core',
-        tag_name: `local/v${this.getContext('version')}`,
-        name: `Local v${this.getContext('version')}`,
-        body: this.getContext('notes'),
-        target_commitish: this.getContext('lastCommitInRelease'),
-      });
-    }
+    await this.step({
+      enabled: !this.options.legacy,
+      task: async () => {
+        await this.octokit.repos.createRelease({
+          owner: 'wandb',
+          repo: 'core',
+          tag_name: `local/v${this.getContext('version')}`,
+          name: `Local v${this.getContext('version')}`,
+          body: this.getContext('notes'),
+          target_commitish: this.getContext('lastCommitInRelease'),
+        });
+      },
+      label: 'Creating release in core',
+      prompt: 'release_to_core',
+    });
   }
 }
 
