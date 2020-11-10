@@ -25,7 +25,7 @@ class WandbPlugin extends Plugin {
   }
 
   defaultNotes() {
-    return this.getContext("notes");
+    return this.getContext('notes');
   }
 
   bump(version) {
@@ -35,15 +35,18 @@ class WandbPlugin extends Plugin {
   async getChangelog(latestVersion) {
     this.setContext({latestVersion});
     if (this.options.legacy) {
-      const versionParts = latestVersion.split(".").map((v) => parseInt(v, 10))
-      versionParts[2] += 1
-      const version = versionParts.join(".")
+      const versionParts = latestVersion.split('.').map((v) => parseInt(v, 10));
+      versionParts[2] += 1;
+      const version = versionParts.join('.');
       const res = await this.octokit.repos.getReleaseByTag({
         owner: 'wandb',
         repo: 'core',
         tag: `local/v${version}`,
       });
-      this.setContext({date: new Date(res.data.published_at), notes: res.data.body});
+      this.setContext({
+        date: new Date(res.data.published_at),
+        notes: res.data.body,
+      });
       return res.data.body;
     } else {
       this.setContext({date: new Date()});
@@ -62,13 +65,19 @@ class WandbPlugin extends Plugin {
         since: publishedAt,
       });
       //new Date(commit.author.date) > new Date(publishedAt)
-      if(res.data.length > 100) {
-        console.warn("There have been more than 100 commits since the last release!")
+      if (res.data.length > 100) {
+        console.warn(
+          'There have been more than 100 commits since the last release!'
+        );
       }
       const notes = res.data
         .map((commit) => `* ${commit.commit.message.split('\n')[0]}`)
         .join('\n');
-      this.setContext({notes})
+      this.setContext({notes});
+
+      this.setContext({
+        lastCommitInRelease: res.data[res.data.length - 1].commit.tree.sha,
+      });
       return notes;
     }
   }
@@ -77,7 +86,7 @@ class WandbPlugin extends Plugin {
     const fileDescriptor = fs.openSync(filePath, 'a+');
 
     const oldData = fs.readFileSync(filePath);
-    const newData = new Buffer.from(renderedTemplate.split("\r\n").join("\n"));
+    const newData = new Buffer.from(renderedTemplate.split('\r\n').join('\n'));
 
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.writeSync(fileDescriptor, oldData, 0, oldData.length, newData.length);
@@ -87,7 +96,7 @@ class WandbPlugin extends Plugin {
 
   saveReleaseNotesToFile(filePath, notes) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
-    const newData = new Buffer.from(notes.split("\r\n").join("\n"));
+    const newData = new Buffer.from(notes.split('\r\n').join('\n'));
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.closeSync(fileDescriptor);
   }
@@ -117,6 +126,19 @@ class WandbPlugin extends Plugin {
       label: 'Creating notes',
       prompt: 'release_notes',
     });
+  }
+
+  async release() {
+    if (!this.options.legacy) {
+      await this.octokit.repos.createRelease({
+        owner: 'wandb',
+        repo: 'core',
+        tag_name: `local/v${this.getContext('version')}`,
+        name: `Local v${this.getContext('version')}`,
+        body: this.getContext('notes'),
+        target_commitish: this.getContext('lastCommitInRelease'),
+      });
+    }
   }
 }
 
