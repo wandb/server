@@ -61,11 +61,11 @@ class WandbPlugin extends Plugin {
       const {recentCommits} = await this.fetchGithubInfo(latestVersion);
 
       const lastFiveCommitChoices = recentCommits.slice(0, 5).map((commit) => ({
-        name: `${commit.sha.slice(
-          commit.sha.length - 8
-        )} - ${commit.commit.message.split('\n')[0].slice(0, 100)}`,
+        name: `${commit.sha.slice(0, 8)} - ${commit.commit.message
+          .split('\n')[0]
+          .slice(0, 100)}`,
         value: commit.sha, // this will be returned as the choice value
-        short: commit.sha.slice(8),
+        short: commit.sha.slice(0, 8),
       }));
 
       this.registerPrompts({
