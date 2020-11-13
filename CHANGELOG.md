@@ -4,7 +4,6 @@
 * Make the minmax lines work in case where y value is zero
 * Better read-only view for Vega custom charts editor
 * Allow artifacts to be renamed and retyped
-* John/full vega editor
 * API keys for service accounts are now visible
 * Implemented a new Vega spec editor for custom charts
 * Made aliases copyable on Artifacts Overview
