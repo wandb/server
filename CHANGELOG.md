@@ -1,3 +1,40 @@
+## wandb/local:0.9.31 (November 13, 2020)
+
+* Added support for scriptable alerts (requires CLI v0.10.9)
+* Make the minmax lines work in case where y value is zero
+* Better read-only view for Vega custom charts editor
+* Allow artifacts to be renamed and retyped
+* John/full vega editor
+* API keys for service accounts are now visible
+* Implemented a new Vega spec editor for custom charts
+* Made aliases copyable on Artifacts Overview
+* Added ability to delete artifacts by collection
+* Fixed bug that prevented the copy button from working in the code tab in artifacts
+* Security improvements for the local container environment (added HSTS header in SSL mode, removed admin log viewer)
+* Adding a panel to a section now opens that section
+* Added option to continue draft when adding panels to a report
+* Fixed step slider not updating the image panel
+* Fixed scrolling overflow issues for Artifact tables
+* Fixed error when user has duplicate invites
+* Added runtime to parameter importance panel
+* Added sidebar for artifact comparisons
+* Added button to insert text block in reports
+* Added batch deletion for sweeps
+* Forced all new local users to set a username.
+* Added support for aggregation queries in the UI using the MongoDB query language
+* Preserve color/mark/title overrides when exporting panels from run page
+* Fixed several bugs in the parallel coordinates column
+* Added initial support for high-availability deployments (multiple nodes)
+* Improved UI around bounding boxes
+* Improved performance for custom charts
+* Add instance settings to the debug bundle
+* Fixed a crash that occurred when deleting runs
+* Fixed bug where panels would constantly re-render
+* Fixed bug where changing tags would reset the tags' sort order
+* Added the "Samples" grouping option to line plots, which displays the underlying lines combined to form a grouped line
+* Fixed crash when attempting to show data from a private project in a report (an error now displays in the panel instead)
+
+
 ## wandb/local:0.9.30 (October 14, 2020)
 
 * Enabled exporting panels to different report sections
