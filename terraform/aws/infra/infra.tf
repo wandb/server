@@ -32,6 +32,11 @@ variable "deployment_is_private" {
   type        = bool
   default     = false
 }
+variable "kubernetes_api_is_private" {
+  description = "If true, the kubernetes API server endpoint will be private."
+  type        = bool
+  default     = false
+}
 
 ##########################################
 # Data
@@ -187,7 +192,7 @@ resource "aws_eks_cluster" "wandb" {
 
   vpc_config {
     endpoint_private_access = true
-    endpoint_public_access  = ! var.deployment_is_private
+    endpoint_public_access  = ! var.kubernetes_api_is_private
     security_group_ids      = [aws_security_group.eks_master.id]
     subnet_ids              = aws_subnet.wandb_private[*].id
   }

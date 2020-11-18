@@ -31,13 +31,20 @@ variable "deployment_is_private" {
   default     = false
 }
 
+variable "kubernetes_api_is_private" {
+  description = "If true, the kubernetes API server endpoint will be private."
+  type        = bool
+  default     = false
+}
+
 
 module "infra" {
   source = "./infra"
 
-  global_environment_name = var.global_environment_name
-  db_password             = var.db_password
-  deployment_is_private   = var.deployment_is_private
+  global_environment_name   = var.global_environment_name
+  db_password               = var.db_password
+  deployment_is_private     = var.deployment_is_private
+  kubernetes_api_is_private = var.kubernetes_api_is_private
 }
 
 module "kube" {
