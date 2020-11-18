@@ -25,19 +25,12 @@ variable "wandb_version" {
   default     = "0.9.30"
 }
 
-variable "deployment_is_private" {
-  description = "If true, the load balancer will be placed in a private subnet, and the kubernetes API server endpoint will be private."
-  type        = bool
-  default     = false
-}
-
 
 module "infra" {
   source = "./infra"
 
   global_environment_name = var.global_environment_name
   db_password             = var.db_password
-  deployment_is_private   = var.deployment_is_private
 }
 
 module "kube" {

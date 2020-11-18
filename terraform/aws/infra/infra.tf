@@ -27,12 +27,6 @@ variable "db_password" {
   type        = string
 }
 
-variable "deployment_is_private" {
-  description = "If true, the load balancer will be placed in a private subnet, and the kubernetes API server endpoint will be private."
-  type        = bool
-  default     = false
-}
-
 ##########################################
 # Data
 ##########################################
@@ -58,7 +52,7 @@ resource "aws_vpc" "wandb" {
   }
 }
 
-resource "aws_subnet" "wandb_public" {
+resource "aws_subnet" "wandb" {
   count = 2
 
   availability_zone       = data.aws_availability_zones.available.names[count.index]
@@ -67,48 +61,11 @@ resource "aws_subnet" "wandb_public" {
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                        = "wandb-public-${count.index}"
+    "Name"                        = "wandb-${count.index}"
     "kubernetes.io/cluster/wandb" = "shared"
   }
 }
 
-resource "aws_subnet" "wandb_private" {
-  count = 2
-
-  availability_zone = data.aws_availability_zones.available.names[count.index]
-  cidr_block        = "10.10.${length(aws_subnet.wandb_public) + count.index}.0/24"
-  vpc_id            = aws_vpc.wandb.id
-
-  depends_on = [aws_subnet.wandb_public]
-
-  tags = {
-    "Name"                        = "wandb-private-${count.index}"
-    "kubernetes.io/cluster/wandb" = "shared"
-  }
-}
-
-resource "aws_eip" "wandb" {
-  count = 2
-
-  vpc = true
-
-  tags = {
-    Name = "wandb-eip-${count.index}"
-  }
-}
-
-resource "aws_nat_gateway" "wandb" {
-  count = 2
-
-  allocation_id = aws_eip.wandb[count.index].id
-  subnet_id     = aws_subnet.wandb_public[count.index].id
-
-  depends_on = [aws_internet_gateway.wandb]
-
-  tags = {
-    Name = "wandb-nat-gateway-${count.index}"
-  }
-}
 resource "aws_internet_gateway" "wandb" {
   vpc_id = aws_vpc.wandb.id
 
@@ -117,46 +74,20 @@ resource "aws_internet_gateway" "wandb" {
   }
 }
 
-resource "aws_route_table" "wandb_public" {
+resource "aws_route_table" "wandb" {
   vpc_id = aws_vpc.wandb.id
 
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.wandb.id
   }
-
-  tags = {
-    Name = "wandb-route-table-public"
-  }
 }
 
-resource "aws_route_table_association" "wandb_public" {
+resource "aws_route_table_association" "wandb_workers" {
   count = 2
 
-  subnet_id      = aws_subnet.wandb_public[count.index].id
-  route_table_id = aws_route_table.wandb_public.id
-}
-
-resource "aws_route_table" "wandb_private" {
-  count = 2
-
-  vpc_id = aws_vpc.wandb.id
-
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.wandb[count.index].id
-  }
-
-  tags = {
-    Name = "wandb-route-table-private-${count.index}"
-  }
-}
-
-resource "aws_route_table_association" "wandb_private" {
-  count = 2
-
-  subnet_id      = aws_subnet.wandb_private[count.index].id
-  route_table_id = aws_route_table.wandb_private[count.index].id
+  subnet_id      = aws_subnet.wandb[count.index].id
+  route_table_id = aws_route_table.wandb.id
 }
 
 ##########################################
@@ -183,13 +114,11 @@ resource "aws_security_group" "eks_master" {
 resource "aws_eks_cluster" "wandb" {
   name     = "wandb"
   role_arn = aws_iam_role.wandb_cluster_role.arn
-  version  = "1.18"
+  version  = "1.15"
 
   vpc_config {
-    endpoint_private_access = true
-    endpoint_public_access  = ! var.deployment_is_private
-    security_group_ids      = [aws_security_group.eks_master.id]
-    subnet_ids              = aws_subnet.wandb_private[*].id
+    security_group_ids = [aws_security_group.eks_master.id]
+    subnet_ids         = aws_subnet.wandb.*.id
   }
 
   depends_on = [
@@ -327,9 +256,9 @@ resource "aws_iam_role_policy_attachment" "wandb_node_sqs_policy" {
 
 resource "aws_eks_node_group" "eks_worker_node_group" {
   cluster_name    = aws_eks_cluster.wandb.name
-  node_group_name = "wandb-eks-node-group"
+  node_group_name = "wandb-node-group"
   node_role_arn   = aws_iam_role.wandb_node_role.arn
-  subnet_ids      = aws_subnet.wandb_private[*].id
+  subnet_ids      = aws_subnet.wandb[*].id
 
   scaling_config {
     desired_size = 1
@@ -342,7 +271,6 @@ resource "aws_eks_node_group" "eks_worker_node_group" {
   # Ensure that IAM Role permissions are created before and deleted after EKS Node Group handling.
   # Otherwise, EKS will not be able to properly delete EC2 Instances and Elastic Network Interfaces.
   depends_on = [
-    aws_eks_cluster.wandb,
     aws_iam_role_policy_attachment.wandb_node_worker_policy,
     aws_iam_role_policy_attachment.wandb_node_cni_policy,
     aws_iam_role_policy_attachment.wandb_node_registry_policy,
@@ -386,10 +314,10 @@ resource "aws_security_group" "wandb_alb" {
 
 resource "aws_lb" "wandb" {
   name               = "wandb-alb"
-  internal           = var.deployment_is_private
+  internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.wandb_alb.id]
-  subnets            = var.deployment_is_private ? aws_subnet.wandb_private[*].id : aws_subnet.wandb_public[*].id
+  subnets            = aws_subnet.wandb.*.id
 }
 
 output "lb_address" {
@@ -553,7 +481,7 @@ resource "aws_s3_bucket_notification" "file_metadata_sns" {
 
 resource "aws_db_subnet_group" "metadata_subnets" {
   name       = "wandb-db-subnets"
-  subnet_ids = aws_subnet.wandb_private[*].id
+  subnet_ids = aws_subnet.wandb.*.id
 }
 
 resource "aws_rds_cluster" "metadata_cluster" {
