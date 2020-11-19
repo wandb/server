@@ -32,10 +32,29 @@ variable "deployment_is_private" {
   type        = bool
   default     = false
 }
+
 variable "kubernetes_api_is_private" {
   description = "If true, the kubernetes API server endpoint will be private."
   type        = bool
   default     = false
+}
+
+variable "vpc_cidr_block" {
+  description = "CIDR block for the VPC."
+  type        = string
+  default     = "10.10.0.0/16"
+}
+
+variable "public_subnet_cidr_blocks" {
+  description = "CIDR blocks for the public VPC subnets. Should be a list of 2 CIDR blocks."
+  type        = list(string)
+  default     = ["10.10.0.0/24", "10.10.1.0/24"]
+}
+
+variable "private_subnet_cidr_blocks" {
+  description = "CIDR blocks for the private VPC subnets. Should be a list of 2 CIDR blocks."
+  type        = list(string)
+  default     = ["10.10.2.0/24", "10.10.3.0/24"]
 }
 
 ##########################################
@@ -53,7 +72,7 @@ data "aws_availability_zones" "available" {
 ##########################################
 
 resource "aws_vpc" "wandb" {
-  cidr_block           = "10.10.0.0/16"
+  cidr_block           = var.vpc_cidr_block
   enable_dns_support   = true
   enable_dns_hostnames = true
 
@@ -67,7 +86,7 @@ resource "aws_subnet" "wandb_public" {
   count = 2
 
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  cidr_block              = "10.10.${count.index}.0/24"
+  cidr_block              = var.public_subnet_cidr_blocks[count.index]
   vpc_id                  = aws_vpc.wandb.id
   map_public_ip_on_launch = true
 
@@ -81,7 +100,7 @@ resource "aws_subnet" "wandb_private" {
   count = 2
 
   availability_zone = data.aws_availability_zones.available.names[count.index]
-  cidr_block        = "10.10.${length(aws_subnet.wandb_public) + count.index}.0/24"
+  cidr_block        = var.private_subnet_cidr_blocks[count.index]
   vpc_id            = aws_vpc.wandb.id
 
   depends_on = [aws_subnet.wandb_public]
