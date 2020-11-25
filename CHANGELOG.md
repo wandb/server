@@ -1,3 +1,38 @@
+## wandb/local:0.9.32 (November 25, 2020)
+
+This release includes important security fixes, users should update to this release at their earliest convenience.
+
+## Security
+
+* Improved crypto library usage for more secure random strings
+* Added HSTS headers and cookie flags to prevent CSRF attacks
+* Removed local admin UI log viewer, logs can still be obtained via the debug bundle
+
+## Features & Bugs
+
+* Reports now support comments on specific charts or sections! https://docs.wandb.com/reports#comment-on-reports
+* Beta release of Dataset visualiztion for artifacts, see: https://docs.wandb.com/datasets-and-predictions
+* Custom charts are now exporable as SVG, PNG, or CSV
+* New storage browser and bulk deletion UI accessible from settings pages
+* New home page onboarding experience
+* Disable comment @-mentions if there are no team members in the report entity
+* Chart and run table CSV export improvements
+* Fixed resizable run table snapping behaviour
+* Hide Create Report button in jupyter notebooks
+* File permissions in /vol are no longer changed for faster boot times
+* Parallel Coordinates UI improvements
+* Make sorting icons consistent in the runs table
+* Custom chart performance improvements
+* Custom charts now display all columns of all tables when several tables selected
+* Fix issue where users can't load public artifact files in UI.
+* Better error handling of artifacts error when users don't have write permission
+* Improvements to keyset handling for projects with lots of keys.
+* Stretch images when they're small, auto-join comparisons join on id.
+* Better permission handling for run deletion on teams
+* Better error messages for artifact type mis-matches
+* Better searchable select widgets in various UI components
+
+
 ## wandb/local:0.9.31 (November 13, 2020)
 
 * Added support for scriptable alerts (requires CLI v0.10.9)
