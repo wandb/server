@@ -1,3 +1,32 @@
+## wandb/local:0.9.33 (December 4, 2020)
+
+This release contains fixes for bugs introduced in version 0.9.32.  Users should upgrade at their earliest convenience to ensure runs are being correctly marked as crashed and that early stopping works properly for sweeps.
+
+* Improvements to the system settings UI
+* Projects are now sorted by the time they were created by default
+* The media panel now takes the current step into account when computing which columns to display
+* Fixed bug that sometimes allowed users without appropriate permissions to create sweeps
+* Service accounts in teams can now write runs
+* Only panels included in the set of visible runs are now exported
+* Added slack integration for local deployments
+* Fixed bug in Artifacts that sometimes prevented deleted files from being garbage collected
+* Fixed bug that sometimes caused workspaces to crash
+* Improvements to the Artifacts Overview tab
+* Scriptable run alerts are now enabled by default for new users
+* Column controls in the Artifacts table are now in the header for each column
+* Fixed bug that prevented users from creating a custom chart if they specified tableColumns
+* Improvements to filter key search (keys now match on their display names)
+* Added support for list/tuple values for categorical parameters in Sweeps
+* Fixed bug preventing use of Artifacts with Azure storage
+* Fixed bug where parallel coordinates charts wouldn't fill the screen
+* Improvements to the system settings UI
+* Fixed bug preventing the deletion of the newst version of an artifact
+* Fixed bug where images would be cropped when opening in fullscreen view
+* Report run tables with customized column configurations no longer automatically insert new columns that appear in the data
+* Fixed bug where runs sometimes wouldn't highlight when hovering corresponding lines in area plots
+
+
+
 ## wandb/local:0.9.32 (November 25, 2020)
 
 This release includes important security fixes, users should update to this release at their earliest convenience.
