@@ -1,3 +1,36 @@
+## wandb/local:0.9.34 (December 21, 2020)
+
+* Fixed bug that caused certain metrics to not display in filters
+* Fix regression in 0.9.33 that prevented instances using a mounted volume from starting up if they also specified an external storage bucket
+* Files downloaded from artifacts now use their original name instead of their MD5 hash
+* Fixed bug that showed duplicated graph in histogram tooltip
+* Disable Google Translate, which was causing the app to crash
+* Added point cloud support to dataset visualization
+* Added the ability to select categorical variables in the parallel coordinates plot
+* Added the ability to click on a node in the Artifact DAG to open the corresponding run or artifact page in a new tab
+* Fixed bug that sometimes caused an incorrect layout when creating a new report
+* Fixed tensorboard for runs where the project name has been changed.
+* Fixed bug that sometimes prevented results in filterable dropdowns from updating when search text changed
+* Allowed dots in config keys in the custom charts query editor
+* Fixed bug where model query failed when missing an entity or project name
+* Fixed bug where users who recently signed up sometimes wouldn't receive emails
+* Fixed bug that prevented logging new versions of an artifact if its latest version was previously deleted
+* Fixed crash in DataSignalViewer when row count is null
+* Fixed crash from using forEach() in Internet Explorer
+* Fixed bug that would sometimes cause Firefox to throw an error while measuring the size of rendered text
+* Fixed bug preventing setting a preview image through report showcase on a user's profile
+* Fixed fullscreen image sizing in the media panel
+* Fixed bug where groups of runs in the runs table would randomly expand and contract
+* Allow text wrapping in tagged refs in report comments
+* Make the horizontal scrollbar on the media panel appear when media is wider than the panel
+* Deprecate old dataframe table
+* Add All and None toggle buttons to mask and bounding box controls
+* Show an error message when visible column limit is reached in Runs table
+* Show an error message in the browser when the container fails to start
+* Show TPU usage in System Metrics tab if applicable
+* Fixed bug where cursor jumped to end when editing panel bank section name
+
+
 ## wandb/local:0.9.33 (December 4, 2020)
 
 This release contains fixes for bugs introduced in version 0.9.32.  Users should upgrade at their earliest convenience to ensure runs are being correctly marked as crashed and that early stopping works properly for sweeps.
