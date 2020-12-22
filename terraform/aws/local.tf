@@ -8,6 +8,12 @@ variable "global_environment_name" {
   type        = string
 }
 
+variable "aws_region" {
+  description = "The AWS region in which to place the resources."
+  type        = string
+  default     = "us-west-2"
+}
+
 variable "license" {
   description = "The license string for your local instance."
   type        = string
@@ -59,6 +65,7 @@ module "infra" {
   source = "./infra"
 
   global_environment_name    = var.global_environment_name
+  aws_region                 = var.aws_region
   db_password                = var.db_password
   deployment_is_private      = var.deployment_is_private
   kubernetes_api_is_private  = var.kubernetes_api_is_private
