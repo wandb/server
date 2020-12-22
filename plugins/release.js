@@ -182,18 +182,22 @@ class WandbPlugin extends Plugin {
       lastReleasePublishedAt,
       lastReleaseSHA
     );
-    res = await this.octokit.repos.listCommits({
-      owner: 'wandb',
-      repo: 'core',
-      per_page: 100,
-      since: lastReleasePublishedAt,
-    });
-    if (res.data.length > 100) {
+
+    // .paginate() resolves to an array of results from all pages combined:
+    const recentCommits = await this.octokit.paginate(
+      'GET /repos/{owner}/{repo}/commits',
+      {
+        owner: 'wandb',
+        repo: 'core',
+        since: lastReleasePublishedAt,
+      }
+    );
+
+    if (recentCommits.length > 100) {
       console.warn(
         'There have been more than 100 commits since the last release!'
       );
     }
-    const recentCommits = res.data;
 
     const githubInfo = {
       recentCommits,
