@@ -5,7 +5,7 @@ This repo contains a terraform stack you can use to deploy your very own W&B Loc
 ## Prerequisites
 
 To use this install guide, you must have the following utilities installed already:
-* [Terraform 0.12.25 or higher](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+* [Terraform 0.12.25](https://releases.hashicorp.com/terraform/0.12.25/terraform_0.12.25_darwin_amd64.zip)
 * [AWS CLI](https://aws.amazon.com/cli/)
 * [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
 
