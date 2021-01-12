@@ -32,7 +32,7 @@ variable "wandb_version" {
 }
 
 variable "deployment_is_private" {
-  description = "If true, the load balancer will be placed in a private subnet, and the kubernetes API server endpoint will be private."
+  description = "If true, the load balancer will be placed in a private subnet."
   type        = bool
   default     = false
 }
