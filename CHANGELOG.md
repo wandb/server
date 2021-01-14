@@ -1,3 +1,30 @@
+## wandb/local:0.9.35 (January 14, 2021)
+
+* Upgraded the base image to Ubuntu Bionic
+* Added support for specifying the AWS_S3_KMS_ID env variable to encrypt S3 Objects with a custom key
+* Fixed crash in Artifacts UI when viewing media in a join table
+* Fixed the bottom of the custom chart editor getting cut off
+* Added ability to filter/sort/group runs by hostname
+* Fixed bug when linking to runs from outside their project
+* Fixed an error state in the custom chart editor that prevented the data pane from listing data in some cases
+* Added the ability to view a custom chart spec and copy it to a new report
+* Fixed an infinite loop when using Google Cloud Storage
+* Redacted emails when resetting passwords
+* Updated modal flow when creating report
+* Enable iframe embedding (e.g. Streamlit apps) in HTML media objects
+* Added support for video files, HTML media objects, Bokeh plots, and boolean values to Artifacts
+* More informative error state when uploading payloads that are too large
+* Improved UI flow for deleting artifacts with aliases
+* Updated icons in the report editor
+* Created tables showing input and output artifacts used for a given run
+* Added links to tables and joined tables in the Artifacts overview
+* Added the ability to select empty string columns in the parallel coordinates chart
+* Fixed "no runs selected" error when making selections on the parallel coordinates chart
+* Made various improvements to the output of the LaTeX export
+* Fix server error when getting a list of projects from an access token when some projects have been deleted
+* Fix server error on project lookups missing a project or entity namee
+
+
 ## wandb/local:0.9.34 (December 21, 2020)
 
 * Fixed bug that caused certain metrics to not display in filters
