@@ -1,3 +1,14 @@
+## wandb/local:0.9.36 (January 26, 2021)
+
+* Fixed an issue with parsing unicode characters in history.
+* Improved report stability.
+* Fixed an issue with artifact file downloads.
+* Improved handling of nested key structures.
+* Fixed an issue that may cause file notification queue backups.
+* Added support for expressions in big scalar panel.
+* General bug fixes and stability improvements.
+
+
 ## wandb/local:0.9.35 (January 14, 2021)
 
 * Upgraded the base image to Ubuntu Bionic
