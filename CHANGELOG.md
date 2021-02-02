@@ -1,3 +1,13 @@
+## wandb/local:0.9.37 (February 2, 2021)
+
+* UX improvements for artifact aliases and run tag editing.
+* Extended deadline and implemented retry for loading system settings from a bucket.
+* Performance improvements for sweep suggestions.
+* Added support for parallel writers in artifacts.
+* UX improvements for dataset visualization.
+* Improved debug information if container fails to start
+
+
 ## wandb/local:0.9.36 (January 26, 2021)
 
 * Fixed an issue with parsing unicode characters in history.
