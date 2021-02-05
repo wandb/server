@@ -60,6 +60,17 @@ variable "private_subnet_cidr_blocks" {
   default     = ["10.10.2.0/24", "10.10.3.0/24"]
 }
 
+variable "extra_tags" {
+  description = "A map of attributes to apply to all resources."
+  type        = map(string)
+  default     = {}
+}
+
+variable "s3_use_aes256" {
+  description = "Whether to use AES256 or KMS key encryption in the S3 bucket."
+  type        = bool
+  default     = true
+}
 
 module "infra" {
   source = "./infra"
@@ -72,6 +83,8 @@ module "infra" {
   vpc_cidr_block             = var.vpc_cidr_block
   public_subnet_cidr_blocks  = var.public_subnet_cidr_blocks
   private_subnet_cidr_blocks = var.private_subnet_cidr_blocks
+  extra_tags                 = var.extra_tags
+  s3_use_aes256              = var.s3_use_aes256
 }
 
 module "kube" {
