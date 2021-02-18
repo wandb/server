@@ -1,3 +1,14 @@
+## wandb/local:0.9.38 (February 17, 2021)
+
+- Fixed an issue with histograms rendering colors in a non-deterministic order
+- Fixed issues where deleting projects or benchmarks could crash runs
+- Added a LOGGING_ENABLED flag to send server logs to stddout+stderr
+- WYSIWYG reports
+- Fixed an issue where file uploads fail on buckets using KMS 
+- Security fixes
+- Fixed an issue where bulk deleting projects or artifacts could fail
+
+
 ## wandb/local:0.9.37 (February 2, 2021)
 
 * UX improvements for artifact aliases and run tag editing.
