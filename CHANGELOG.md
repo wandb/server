@@ -1,3 +1,21 @@
+## wandb/local:0.9.39 (March 26, 2021)
+
+* Added more options for increased parallelism in processing uploaded data.
+* Fixed a few report stying regressions.
+* Added more diagnostic info for sweeps.
+* Increased size of 3d points in 3d object panel.
+* Added more robust support for S3 buckets using custom KMS keys.
+* Improved drag/drop behavior of panels in workspaces.
+* Added checkboxes to reports.
+* Reconfigured default limits for local installs.
+* UI polish and usability improvements for dataset & prediction visualization tables.
+* Added warning when local install is out of date.
+* Added support for incremental artifact commits.
+* Improved filter validation for run table queries.
+* Added ability to create reports in empty projects.
+* Improved jupyter notebook renderer and added ability to save code as an artifact.
+
+
 ## wandb/local:0.9.38 (February 17, 2021)
 
 - Fixed an issue with histograms rendering colors in a non-deterministic order
