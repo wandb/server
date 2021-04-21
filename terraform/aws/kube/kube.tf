@@ -1,6 +1,10 @@
-provider "kubernetes" {
-  load_config_file = "false"
+terraform {
+  required_providers {
+    kubernetes = "~> 2.1.0"
+  }
+}
 
+provider "kubernetes" {
   host = var.kube_cluster_endpoint
 
   cluster_ca_certificate = base64decode(var.kube_cert_data)
@@ -138,11 +142,11 @@ resource "kubernetes_deployment" "wandb" {
           }
 
           resources {
-            requests {
+            requests = {
               cpu    = "1500m"
               memory = "4G"
             }
-            limits {
+            limits = {
               cpu    = "4000m"
               memory = "8G"
             }
