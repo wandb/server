@@ -1,3 +1,18 @@
+## wandb/local:0.9.40 (April 29, 2021)
+
+* Added option to set a different set of options in each panel section within a workspace.
+* Added option to change default panel arrangement in workspaces based on metric prefixes.
+* Added toggle for "freezing" a set of runs in the project run table.
+* Made a few usability improvements for custom charts.
+* Optimized for a few expensive backend queries.
+* Added support for writing incremental artifacts.
+* Added backend support for define_metric.
+* Made a few smaller UI element improvements.
+* Made improvements to artifact deletion.
+* Implemented live-updating comments within reports.
+* Fixed a bug with our authentication layer.
+
+
 ## wandb/local:0.9.39 (March 26, 2021)
 
 * Added more options for increased parallelism in processing uploaded data.
