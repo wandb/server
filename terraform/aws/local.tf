@@ -28,7 +28,7 @@ variable "db_password" {
 variable "wandb_version" {
   description = "The version of wandb to deploy."
   type        = string
-  default     = "0.9.30"
+  default     = "0.9.40"
 }
 
 variable "deployment_is_private" {
