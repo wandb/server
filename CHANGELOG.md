@@ -1,3 +1,15 @@
+## wandb/local:0.9.41 (May 27, 2021)
+
+* Added a few optimizations for frontend and backend performance.
+* Added validation for sweep configs.
+* Added support for preemptible runs and sweeps.
+* Fixed several small issues with reports.
+* Added new "Weave" panel type to workspaces and reports.
+* Fixed an issue where the backend might return 500 at the end of a grid search sweep.
+* Made several improvements to scatter plots.
+* Made links in table cells clickable.
+
+
 ## wandb/local:0.9.40 (April 29, 2021)
 
 * Added option to set a different set of options in each panel section within a workspace.
