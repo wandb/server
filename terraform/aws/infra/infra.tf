@@ -223,6 +223,14 @@ resource "aws_eks_cluster" "wandb" {
   ]
 }
 
+data "aws_eks_cluster_auth" "wandb" {
+  name = "wandb"
+}
+
+output "eks_cluster_token" {
+  value = data.aws_eks_cluster_auth.wandb.token
+}
+
 output "eks_cluster_endpoint" {
   value = aws_eks_cluster.wandb.endpoint
 }
@@ -417,8 +425,8 @@ resource "aws_lb" "wandb" {
   subnets            = var.deployment_is_private ? aws_subnet.wandb_private[*].id : aws_subnet.wandb_public[*].id
 }
 
-output "lb_address" {
-  value = "http://${aws_lb.wandb.dns_name}"
+output "lb_dns_name" {
+  value = aws_lb.wandb.dns_name
 }
 
 resource "aws_lb_target_group" "wandb_tg" {
