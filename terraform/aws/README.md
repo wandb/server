@@ -7,7 +7,6 @@ This repo contains a terraform stack you can use to deploy your very own W&B Loc
 To use this install guide, you must have the following utilities installed already:
 * [Terraform 0.12.25](https://releases.hashicorp.com/terraform/0.12.25/)
 * [AWS CLI](https://aws.amazon.com/cli/)
-* [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
 
 ## Preparing for Install
 For best results, we recommend applying this terraform stack in an empty AWS subaccount. We also recommend against making custom modifications to this terraform stack (outside of specifying configurable variables) -- we can only guarantee that the default stack in the main branch of this repo is fully functional.

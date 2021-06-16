@@ -85,8 +85,9 @@ module "kube" {
   file_storage_bucket_region = module.infra.s3_bucket_region
   file_metadata_queue_name   = module.infra.sqs_queue_name
   database_endpoint          = module.infra.rds_connection_string
+  token                      = module.infra.eks_cluster_token
 }
 
 output "url" {
-  value = module.infra.lb_address
+  value = "http://${module.infra.lb_dns_name}"
 }

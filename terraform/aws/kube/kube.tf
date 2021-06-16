@@ -12,16 +12,17 @@ provider "kubernetes" {
   config_context_auth_info = "aws"
   config_context_cluster   = "kubernetes"
 
-  exec {
-    api_version = "client.authentication.k8s.io/v1alpha1"
-    command     = "aws-iam-authenticator"
-    args        = ["token", "-i", "wandb"]
-  }
+  token = var.token
 }
 
 ##########################################
 # Variables
 ##########################################
+
+variable "token" {
+  description = "The token of the kubernetes cluster."
+  type        = string
+}
 
 variable "license" {
   description = "The license string for your local instance."
@@ -194,12 +195,6 @@ resource "local_file" "kubeconfig" {
     users:
     - name: aws
       user:
-        exec:
-          apiVersion: client.authentication.k8s.io/v1alpha1
-          command: aws-iam-authenticator
-          args:
-            - "token"
-            - "-i"
-            - "wandb"
+        token: ${var.token}
 KUBECONFIG
 }
