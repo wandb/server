@@ -86,6 +86,10 @@ variable "enabled" {
   type        = bool
 }
 
+locals {
+  host = trimprefix(trimprefix(var.frontend_host, "https://"), "http://")
+}
+
 ##########################################
 # Kubernetes
 ##########################################
@@ -200,31 +204,31 @@ resource "kubernetes_service" "wandb_service" {
       app = "wandb"
     }
     port {
-      protocol  = "TCP"
-      port      = 80
+      protocol    = "TCP"
+      port        = 80
       target_port = 8080
     }
   }
 }
 
 resource "kubernetes_ingress" "wandb_ingress" {
-  count = var.enabled ? 1 : 0
+  count                  = var.enabled ? 1 : 0
   wait_for_load_balancer = true
   metadata {
     name = "wandb"
     annotations = {
-      "kubernetes.io/ingress.class" = "azure/application-gateway"
-      "cert-manager.io/cluster-issuer" = "issuer-letsencrypt-prod"
+      "kubernetes.io/ingress.class"         = "azure/application-gateway"
+      "cert-manager.io/cluster-issuer"      = "issuer-letsencrypt-prod"
       "cert-manager.io/acme-challenge-type" = "http01"
     }
   }
   spec {
     tls {
-      hosts = [var.frontend_host]
+      hosts       = [local.host]
       secret_name = var.tls_secret_name
     }
     rule {
-      host = var.frontend_host
+      host = local.host
       http {
         path {
           path = "/"

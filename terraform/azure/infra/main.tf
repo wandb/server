@@ -2,9 +2,8 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=2.63.0"
+      version = ">=2.63.0"
     }
-    azuread = ">=0.6"
   }
 }
 
@@ -133,6 +132,8 @@ resource "azurerm_application_gateway" "wandb" {
   ]
 
   lifecycle {
+    # K8S will be changing all of these settings so we ignore them.
+    # We really only needed this resource to assign a known public IP.
     ignore_changes = [
       ssl_certificate,
       request_routing_rule,

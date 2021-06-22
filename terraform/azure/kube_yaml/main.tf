@@ -51,6 +51,10 @@ variable "lets_encrypt_email" {
   default     = "sysadmin@wandb.com"
 }
 
+locals {
+  host = trimprefix(trimprefix(var.frontend_host, "https://"), "http://")
+}
+
 resource "local_file" "wandb_kube" {
   filename = "wandb.yaml"
   content  = <<KUBE
@@ -134,10 +138,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - ${var.frontend_host}
+    - ${local.host}
     secretName: ${var.tls_secret_name}
   rules:
-  - host: ${var.frontend_host}
+  - host: ${local.host}
     http:
       paths:
       - path: /

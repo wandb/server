@@ -8,6 +8,10 @@ To use this install guide, you must have the following utilities installed alrea
 * [Terraform >= 0.12.25](https://releases.hashicorp.com/terraform/0.12.25/)
 * [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
 
+## Overview
+
+This terraform will deploy an application gateway and AKS cluster running wandb connected to a blob container and MySQL database.
+
 ## Preparing for install
 
 You'll need to ensure your az command is logged in to the right account by running `az login`.  By default we deploy an AKS cluster with the control plane on the internet.  If you want to keep the kubernetes control plane off the internet see Private Control Plane below.
