@@ -1,3 +1,35 @@
+## wandb/local:0.9.42 (June 30, 2021)
+
+* Added support for authentication via Google Identity-Aware Proxy
+* Add "Import panel" feature to reports
+* Fixed bugs resulting from spaces in user emails
+* Added the ability to view PyTorch Kineto traces in artifacts
+* Added popup to clarify restricted characters in artifact aliases
+* Security updates for wandb local
+* BarChart, Histogram, String Histrogram, MultiHistrogram, and MultiStringHistorgram all now color their data with run colors
+* Disabled the Delete Run button for runs that contain undeleted Artifacts
+* Added download dropdown to the runs table, with export API and CSV export options
+* Added the ability to edit Weave expressions in plain text, and to copy/paste them
+* Fixed rendering errors affecting box plots
+* Improve UX when viewing multiple Tables side-by-side
+* Clarify supported regex syntax for the runs table in a tooltip
+* Fixed sweeps bug where preemptible / preempting runs in would crash a Bayes search
+* Fixed bug where accessing media panels would sometimes erroneously trigger user rate limits
+* Wrap long names in the projects table and on project cards
+* Fixed a bug where panel settings changes in workspaces sometimes wouldn't be applied
+* Added documentation link to Workspace menu
+* New report-creation experience
+* Better UX for moving/duplicating/deleting blocks in reports
+* Made the smoothing input for panels support values greater than the slider max
+* Fixed issue where long media keys could overflow the media panel
+* Fixed issue in Tables expression editor where you couldn't check expressions equality to None
+* Hid code tab in UI when code-saving is disabled
+* Various bug fixes and improvements for Tables and Artifacts
+* Fixed bugs where special characters in group names could break the grouping UI
+* Support for more intuitive logging syntax for Joined and Partitioned tables
+
+
+
 ## wandb/local:0.9.41 (May 27, 2021)
 
 * Added a few optimizations for frontend and backend performance.
