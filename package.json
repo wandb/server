@@ -8,10 +8,12 @@
   "private": true,
   "devDependencies": {
     "@octokit/rest": "^18.0.6",
-    "release-it": "^14.1.0"
+    "release-it": "^14.1.0",
+    "typescript": "^4.3.5"
   },
   "scripts": {
-    "release": "release-it"
+    "build-js": "tsc",
+    "release": "yarn build-js && release-it"
   },
   "release-it": {
     "git": {
@@ -29,7 +31,7 @@
       "before:init": "rm -rf ./staging/RELEASE.md"
     },
     "plugins": {
-      "./plugins/release.js": {
+      "./js/release.js": {
         "legacy": false
       }
     }

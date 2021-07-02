@@ -1,7 +1,7 @@
-const {Plugin} = require('release-it');
-const {Octokit} = require('@octokit/rest');
-const pkg = require('../package.json');
-const fs = require('fs');
+import {Plugin} from 'release-it';
+import {Octokit} from '@octokit/rest';
+import pkg from '../package.json';
+import fs from 'fs';
 
 class WandbPlugin extends Plugin {
   async init() {
@@ -105,11 +105,13 @@ class WandbPlugin extends Plugin {
     }
   }
 
+  async getReleaseNotesForCommit() {}
+
   saveChangelogToFile(filePath, renderedTemplate) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
 
     const oldData = fs.readFileSync(filePath);
-    const newData = new Buffer.from(renderedTemplate.split('\r\n').join('\n'));
+    const newData = Buffer.from(renderedTemplate.split('\r\n').join('\n'));
 
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.writeSync(fileDescriptor, oldData, 0, oldData.length, newData.length);
@@ -119,7 +121,7 @@ class WandbPlugin extends Plugin {
 
   saveReleaseNotesToFile(filePath, notes) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
-    const newData = new Buffer.from(notes.split('\r\n').join('\n'));
+    const newData = Buffer.from(notes.split('\r\n').join('\n'));
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.closeSync(fileDescriptor);
   }
@@ -209,6 +211,38 @@ class WandbPlugin extends Plugin {
 
     return githubInfo;
   }
+}
+
+const RELEASE_NOTES_REGEX =
+  /^\-+\s*BEGIN RELEASE NOTES\s*\-+$(.*)^\-+\s*END RELEASE NOTES\s*\-+$/gms;
+
+const BULLET_POINT_REGEX = /^\s*[\*\-]\s*(.+)\s*$/gm;
+function getReleaseNotesFromPrBody(prBody: string): string[] {
+  const releaseNotesMatch = prBody.match(RELEASE_NOTES_REGEX);
+
+  if (!releaseNotesMatch || releaseNotesMatch.length !== 2) {
+    throw new Error('Release notes section not found in PR body.');
+  }
+
+  const releaseNotesSection = releaseNotesMatch[1].trim();
+
+  if (releaseNotesSection === 'NO RELEASE NOTES') {
+    console.log('This PR is marked as having no release notes ✅');
+    return [];
+  }
+
+  // using ... to convert iterator to array
+  const bulletsMatches = [...releaseNotesSection.matchAll(BULLET_POINT_REGEX)];
+
+  if (bulletsMatches.length === 0) {
+    throw new Error(
+      `No bullet points found in release notes.
+
+If you intend for this PR to have no release notes, please manually write \`NO RELEASE NOTES\` in the release notes section`
+    );
+  }
+
+  return bulletsMatches.map((match) => match[1]);
 }
 
 module.exports = WandbPlugin;
