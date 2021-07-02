@@ -43,3 +43,9 @@ variable "private_subnet_cidr_blocks" {
   type        = list(string)
   default     = ["10.10.1.0/24"]
 }
+
+variable "firewall_ip_address_allow" {
+  description = "List of IP addresses that can access the instance via the API.  Defaults to anyone."
+  type        = list(string)
+  default     = []
+}

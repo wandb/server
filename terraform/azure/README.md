@@ -33,6 +33,7 @@ Check the source code of this repo to see all variables, at a minimum you should
 - lets_encrypt_email - _If you use lets encrypt to handle SSL we'll create a cluster issuer using this email address, see SSL below_
 - frontend_host - _By default we'll use the azure provided dns at envname.regionname.cloudapp.azure.com_
 - kubernetes_api_is_private - _By default the k8s control is on the internet, to make your installation more secure set this to true, see Private Control Plane below_
+- firewall_ip_address_allow - _By default we allow any IP address to log data and use our API's.  Providing a list of IP ranges will limit all programmatic access to those IP's.  Access to the UI will still be allowed from anywhere on the internet_
 
 ## Installation
 
@@ -42,6 +43,12 @@ Be sure you created a file named `terraform.tfvars` in this directory then run:
 terraform init
 terraform apply
 ```
+
+Be sure to save all `terraform.*` files in a safe place.
+
+## Upgrades
+
+Modify the `wandb_version` value in `terraform.tfvars` to the latest version of wandb found in this repositories releases and run `terraform apply`.
 
 ### Private Control Plane
 
@@ -79,8 +86,8 @@ kubectl apply -f cert-issuer.yaml
 
 ### References
 
-https://github.com/Azure/terraform-azurerm-appgw-ingress-k8s-cluster/blob/master/main.tf
-https://github.com/gustavozimm/terraform-aks-app-gateway-ingress/blob/master/main.tf
-
-https://blog.baeke.info/2020/10/25/
-https://docs.microsoft.com/en-us/azure/application-gateway/ingress-controller-letsencrypt-certificate-application-gateway
+- https://github.com/Azure/terraform-azurerm-appgw-ingress-k8s-cluster/blob/master/main.tf
+- https://github.com/gustavozimm/terraform-aks-app-gateway-ingress/blob/master/main.tf
+- https://blog.baeke.info/2020/10/25/
+- https://docs.microsoft.com/en-us/azure/application-gateway/ingress-controller-letsencrypt-certificate-application-gateway
+- https://docs.microsoft.com/en-us/azure/web-application-firewall/ag/create-custom-waf-rules

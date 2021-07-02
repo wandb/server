@@ -68,14 +68,65 @@ resource "azurerm_public_ip" "wandb" {
   domain_name_label   = var.global_environment_name
 }
 
+resource "azurerm_web_application_firewall_policy" "wandb" {
+  name                = "wandb-wafpolicy"
+  resource_group_name = azurerm_resource_group.wandb.name
+  location            = azurerm_resource_group.wandb.location
+  tags                = {}
+
+
+  custom_rules {
+    name      = "APIAccessRestrictions"
+    priority  = 1
+    rule_type = "MatchRule"
+
+    match_conditions {
+      transforms = []
+      match_variables {
+        variable_name = "RemoteAddr"
+      }
+
+      operator           = "IPMatch"
+      negation_condition = true
+      match_values       = length(var.firewall_ip_address_allow) == 0 ? ["10.10.0.0/16"] : var.firewall_ip_address_allow
+    }
+
+    match_conditions {
+      transforms = []
+      match_variables {
+        variable_name = "RequestHeaders"
+        selector      = "Authorization"
+      }
+
+      operator           = "Contains"
+      negation_condition = false
+      match_values       = ["Basic"]
+    }
+
+    action = length(var.firewall_ip_address_allow) == 0 ? "Allow" : "Block"
+  }
+
+  policy_settings {
+    enabled            = true
+    mode               = "Prevention"
+    request_body_check = false
+  }
+
+  managed_rules {
+    managed_rule_set {
+      version = "3.2"
+    }
+  }
+}
+
 resource "azurerm_application_gateway" "wandb" {
   name                = "wandb-appgateway"
   resource_group_name = azurerm_resource_group.wandb.name
   location            = azurerm_resource_group.wandb.location
 
   sku {
-    name     = "Standard_v2"
-    tier     = "Standard_v2"
+    name     = "WAF_v2"
+    tier     = "WAF_v2"
     capacity = 2
   }
 
@@ -125,6 +176,8 @@ resource "azurerm_application_gateway" "wandb" {
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
   }
+
+  firewall_policy_id = azurerm_web_application_firewall_policy.wandb.id
 
   depends_on = [
     azurerm_virtual_network.wandb,

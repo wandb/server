@@ -40,7 +40,7 @@ variable "db_password" {
 variable "wandb_version" {
   description = "The version of wandb to deploy."
   type        = string
-  default     = "0.9.41"
+  default     = "0.9.42"
 }
 
 variable "deployment_is_private" {
@@ -79,6 +79,13 @@ variable "private_subnet_cidr_blocks" {
   default     = ["10.10.1.0/24"]
 }
 
+
+variable "firewall_ip_address_allow" {
+  description = "List of IP addresses that can access the instance via the API.  Defaults to anyone."
+  type        = list(string)
+  default     = []
+}
+
 variable "managed_k8s" {
   description = "Should we manage the k8s cluster?"
   type        = bool
@@ -105,6 +112,7 @@ module "infra" {
   vpc_cidr_block             = var.vpc_cidr_block
   public_subnet_cidr_blocks  = var.public_subnet_cidr_blocks
   private_subnet_cidr_blocks = var.private_subnet_cidr_blocks
+  firewall_ip_address_allow  = var.firewall_ip_address_allow
 }
 
 module "kube_yaml" {
