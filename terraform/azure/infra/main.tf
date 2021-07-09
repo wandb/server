@@ -115,6 +115,21 @@ resource "azurerm_web_application_firewall_policy" "wandb" {
   managed_rules {
     managed_rule_set {
       version = "3.2"
+      rule_group_override {
+        rule_group_name = "REQUEST-942-APPLICATION-ATTACK-SQLI"
+        disabled_rules = [
+          "942200",
+          "942260",
+          "942340",
+          "942370"
+        ]
+      }
+      rule_group_override {
+        rule_group_name = "REQUEST-920-PROTOCOL-ENFORCEMENT"
+        disabled_rules = [
+          "920300"
+        ]
+      }
     }
   }
 }
