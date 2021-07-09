@@ -1,7 +1,9 @@
 *.tfstate*
 .terraform
+*.lock.hcl
 kubeconfig.yaml
 wandb.yaml
+cert-issuer.yaml
 *.tfvars
 node_modules
 staging/*

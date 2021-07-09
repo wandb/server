@@ -13,7 +13,7 @@ For best results, we recommend applying this terraform stack in an empty AWS sub
 
 First, make sure you can access your AWS account with the AWS CLI. You may need to copy credentials into `~/.aws/credentials` and set your `AWS_PROFILE` environment variable.
 
-Next, create a file in this directory (or wherever you plan to run terraform) called `terraform.tfvars`. In this file, you'll define some variables to cofigure your install. This file should have at least the following entries:
+Next, create a file in this directory (or wherever you plan to run terraform) called `terraform.tfvars`. In this file, you'll define some variables to configure your install. This file should have at least the following entries:
 
 ```
 global_environment_name = "<YOUR_UNIQUE_ENVIRONMENT_NAME_HERE>"
