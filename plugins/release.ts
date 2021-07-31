@@ -36,7 +36,7 @@ class WandbPlugin extends Plugin {
       baseUrl: 'https://api.github.com',
       auth: process.env['GITHUB_TOKEN'],
       userAgent: `local/${pkg.version}`,
-      log: null,
+      log: null as any,
       request: {
         timeout: 10000,
       },
@@ -64,11 +64,11 @@ class WandbPlugin extends Plugin {
     return this.getContext('notes');
   }
 
-  bump(version) {
+  bump(version: string) {
     this.setContext({version});
   }
 
-  async getChangelog(latestVersion) {
+  async getChangelog(latestVersion: string) {
     this.setContext({latestVersion});
     if (this.options.legacy) {
       const versionParts = latestVersion.split('.').map((v) => parseInt(v, 10));
@@ -116,7 +116,7 @@ class WandbPlugin extends Plugin {
 
       await this.step({
         enabled: true,
-        task: (targetSHA) => {
+        task: (targetSHA: string) => {
           this.setContext({targetSHA});
         },
         label: 'Selecting target commit',
@@ -155,7 +155,7 @@ class WandbPlugin extends Plugin {
     }
   }
 
-  saveChangelogToFile(filePath, renderedTemplate) {
+  saveChangelogToFile(filePath: string, renderedTemplate: string) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
 
     const oldData = fs.readFileSync(filePath);
@@ -167,7 +167,7 @@ class WandbPlugin extends Plugin {
     fs.closeSync(fileDescriptor);
   }
 
-  saveReleaseNotesToFile(filePath, notes) {
+  saveReleaseNotesToFile(filePath: string, notes: string) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
     const newData = Buffer.from(notes.split('\r\n').join('\n'));
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
@@ -186,7 +186,7 @@ class WandbPlugin extends Plugin {
   async beforeRelease() {
     await this.step({
       enabled: true,
-      task: (notes) => {
+      task: (notes: string) => {
         this.setContext({notes});
         this.saveReleaseNotesToFile('staging/RELEASE.md', notes);
         this.saveChangelogToFile(
