@@ -11,7 +11,9 @@ const getReleaseNotesBuffer = (
 ) => {
   const formattedReleaseNotes = releaseNotes.join('\n* ');
   const formattedCommitsToInspect = commitsToInspect
-    .map((commit) => `* ${commit.commit.message.split('\n')[0]}`)
+    .map(
+      (commit) => `* ${commit.commit.message.split('\n')[0]} ${commit.html_url}`
+    )
     .join('\n');
 
   return `* ${formattedReleaseNotes}
@@ -23,6 +25,7 @@ ${
 ## Ambiguous Commits
 
 Release notes could not be inferred for the following commits -- please check them manually, and then remove this section.
+
 
 ${formattedCommitsToInspect}`
     : ''
@@ -89,8 +92,8 @@ class WandbPlugin extends Plugin {
         await autoReleaseNotes.getLastReleaseInfo(
           this.octokit,
           'wandb',
-          'local',
-          latestVersion
+          'core',
+          `local/v${latestVersion}`
         );
 
       const lastFiveCommitChoices = commitsSinceLastRelease
@@ -128,24 +131,28 @@ class WandbPlugin extends Plugin {
         (commit) => commit.sha === targetSHA
       );
 
-      const commitsToInspect: autoReleaseNotes.Commit[] = [];
-      const commitReleaseNotes: (string[] | null)[] = await Promise.all(
-        commitsSinceLastRelease.map(async (commit) => {
-          const releaseNotes = await autoReleaseNotes.getReleaseNotesForCommit(
-            this.octokit,
-            'wandb',
-            'auto-release-notes',
-            commit
-          );
-
-          if (releaseNotes == null) {
-            commitsToInspect.push(commit);
-          }
-
-          return releaseNotes;
-        })
+      const commitsWithReleaseNotes = await Promise.all(
+        commitsSinceLastRelease.map(
+          async (commit) =>
+            [
+              commit,
+              await autoReleaseNotes.getReleaseNotesForCommit(
+                this.octokit,
+                'wandb',
+                'core',
+                commit
+              ),
+            ] as const
+        )
       );
-      const allReleaseNotes = compact(commitReleaseNotes).flat();
+
+      const allReleaseNotes = compact(
+        commitsWithReleaseNotes.map(([_, releaseNotes]) => releaseNotes)
+      ).flat();
+
+      const commitsToInspect = commitsWithReleaseNotes
+        .filter(([_, releaseNotes]) => releaseNotes == null)
+        .map(([commit, _]) => commit);
 
       const notes = getReleaseNotesBuffer(allReleaseNotes, commitsToInspect);
 

@@ -383,9 +383,9 @@ asynckit@^0.4.0:
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
   integrity sha1-x57Zf380y48robyXkLzDZkdLS3k=
 
-"auto-release-notes@git://github.com/wandb/auto-release-notes.git#v0.1.2":
-  version "0.1.2"
-  resolved "git://github.com/wandb/auto-release-notes.git#9deaab39befe8f74006c933e6c0796c89fdd73f3"
+"auto-release-notes@git://github.com/wandb/auto-release-notes.git#v0.2.0":
+  version "0.2.0"
+  resolved "git://github.com/wandb/auto-release-notes.git#e76554df3d2cf3db0c6f58e4e6b9ec6541f26a9c"
   dependencies:
     "@actions/core" "^1.2.6"
     "@actions/github" "^5.0.0"
