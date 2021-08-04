@@ -7,3 +7,4 @@ cert-issuer.yaml
 *.tfvars
 node_modules
 staging/*
+js/

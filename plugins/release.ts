@@ -1,7 +1,37 @@
-const {Plugin} = require('release-it');
-const {Octokit} = require('@octokit/rest');
-const pkg = require('../package.json');
-const fs = require('fs');
+import {Plugin} from 'release-it';
+import {Octokit} from '@octokit/rest';
+import pkg from '../package.json';
+import fs from 'fs';
+import * as autoReleaseNotes from 'auto-release-notes/lib/index';
+import {compact} from 'lodash';
+
+const getReleaseNotesBuffer = (
+  releaseNotes: string[],
+  commitsToInspect: autoReleaseNotes.Commit[]
+) => {
+  const formattedReleaseNotes = releaseNotes.join('\n* ');
+  const formattedCommitsToInspect = commitsToInspect
+    .map(
+      (commit) => `* ${commit.commit.message.split('\n')[0]} ${commit.html_url}`
+    )
+    .join('\n');
+
+  return `* ${formattedReleaseNotes}
+
+
+${
+  commitsToInspect.length > 0
+    ? `
+## Ambiguous Commits
+
+Release notes could not be inferred for the following commits -- please check them manually, and then remove this section.
+
+
+${formattedCommitsToInspect}`
+    : ''
+}
+`;
+};
 
 class WandbPlugin extends Plugin {
   async init() {
@@ -9,7 +39,7 @@ class WandbPlugin extends Plugin {
       baseUrl: 'https://api.github.com',
       auth: process.env['GITHUB_TOKEN'],
       userAgent: `local/${pkg.version}`,
-      log: null,
+      log: null as any,
       request: {
         timeout: 10000,
       },
@@ -37,11 +67,11 @@ class WandbPlugin extends Plugin {
     return this.getContext('notes');
   }
 
-  bump(version) {
+  bump(version: string) {
     this.setContext({version});
   }
 
-  async getChangelog(latestVersion) {
+  async getChangelog(latestVersion: string) {
     this.setContext({latestVersion});
     if (this.options.legacy) {
       const versionParts = latestVersion.split('.').map((v) => parseInt(v, 10));
@@ -58,15 +88,23 @@ class WandbPlugin extends Plugin {
       });
       return res.data.body;
     } else {
-      const {recentCommits} = await this.fetchGithubInfo(latestVersion);
+      const {commitsSinceLastRelease} =
+        await autoReleaseNotes.getLastReleaseInfo(
+          this.octokit,
+          'wandb',
+          'core',
+          `local/v${latestVersion}`
+        );
 
-      const lastFiveCommitChoices = recentCommits.slice(0, 5).map((commit) => ({
-        name: `${commit.sha.slice(0, 8)} - ${commit.commit.message
-          .split('\n')[0]
-          .slice(0, 100)}`,
-        value: commit.sha, // this will be returned as the choice value
-        short: commit.sha.slice(0, 8),
-      }));
+      const lastFiveCommitChoices = commitsSinceLastRelease
+        .slice(0, 5)
+        .map((commit) => ({
+          name: `${commit.sha.slice(0, 8)} - ${commit.commit.message
+            .split('\n')[0]
+            .slice(0, 100)}`,
+          value: commit.sha, // this will be returned as the choice value
+          short: commit.sha.slice(0, 8),
+        }));
 
       this.registerPrompts({
         select_target_commit: {
@@ -81,7 +119,7 @@ class WandbPlugin extends Plugin {
 
       await this.step({
         enabled: true,
-        task: (targetSHA) => {
+        task: (targetSHA: string) => {
           this.setContext({targetSHA});
         },
         label: 'Selecting target commit',
@@ -89,27 +127,46 @@ class WandbPlugin extends Plugin {
       });
       const {targetSHA} = this.getContext();
 
-      const targetSHAIndex = recentCommits.findIndex(
+      const targetSHAIndex = commitsSinceLastRelease.findIndex(
         (commit) => commit.sha === targetSHA
       );
 
-      console.log({targetSHAIndex});
-      const commitsToRelease = recentCommits.slice(targetSHAIndex);
+      const commitsWithReleaseNotes = await Promise.all(
+        commitsSinceLastRelease.map(
+          async (commit) =>
+            [
+              commit,
+              await autoReleaseNotes.getReleaseNotesForCommit(
+                this.octokit,
+                'wandb',
+                'core',
+                commit
+              ),
+            ] as const
+        )
+      );
 
-      const notes = commitsToRelease
-        .map((commit) => `* ${commit.commit.message.split('\n')[0]}`)
-        .join('\n');
+      const allReleaseNotes = compact(
+        commitsWithReleaseNotes.map(([_, releaseNotes]) => releaseNotes)
+      ).flat();
+
+      const commitsToInspect = commitsWithReleaseNotes
+        .filter(([_, releaseNotes]) => releaseNotes == null)
+        .map(([commit, _]) => commit);
+
+      const notes = getReleaseNotesBuffer(allReleaseNotes, commitsToInspect);
+
       this.setContext({notes});
 
       return notes;
     }
   }
 
-  saveChangelogToFile(filePath, renderedTemplate) {
+  saveChangelogToFile(filePath: string, renderedTemplate: string) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
 
     const oldData = fs.readFileSync(filePath);
-    const newData = new Buffer.from(renderedTemplate.split('\r\n').join('\n'));
+    const newData = Buffer.from(renderedTemplate.split('\r\n').join('\n'));
 
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.writeSync(fileDescriptor, oldData, 0, oldData.length, newData.length);
@@ -117,9 +174,9 @@ class WandbPlugin extends Plugin {
     fs.closeSync(fileDescriptor);
   }
 
-  saveReleaseNotesToFile(filePath, notes) {
+  saveReleaseNotesToFile(filePath: string, notes: string) {
     const fileDescriptor = fs.openSync(filePath, 'a+');
-    const newData = new Buffer.from(notes.split('\r\n').join('\n'));
+    const newData = Buffer.from(notes.split('\r\n').join('\n'));
     fs.writeSync(fileDescriptor, newData, 0, newData.length, 0);
     fs.closeSync(fileDescriptor);
   }
@@ -136,7 +193,7 @@ class WandbPlugin extends Plugin {
   async beforeRelease() {
     await this.step({
       enabled: true,
-      task: (notes) => {
+      task: (notes: string) => {
         this.setContext({notes});
         this.saveReleaseNotesToFile('staging/RELEASE.md', notes);
         this.saveChangelogToFile(
@@ -167,47 +224,6 @@ class WandbPlugin extends Plugin {
       label: 'Creating release in core',
       prompt: 'release_to_core',
     });
-  }
-
-  async fetchGithubInfo(latestVersion) {
-    let res = await this.octokit.repos.getReleaseByTag({
-      owner: 'wandb',
-      repo: 'core',
-      tag: `local/v${latestVersion}`,
-    });
-    const lastReleaseSHA = res.data.target_commitish;
-    const lastReleasePublishedAt = res.data.published_at;
-    console.log(
-      'Grabbing all commits since',
-      lastReleasePublishedAt,
-      lastReleaseSHA
-    );
-
-    // .paginate() resolves to an array of results from all pages combined:
-    const recentCommits = await this.octokit.paginate(
-      'GET /repos/{owner}/{repo}/commits',
-      {
-        owner: 'wandb',
-        repo: 'core',
-        since: lastReleasePublishedAt,
-      }
-    );
-
-    if (recentCommits.length > 100) {
-      console.warn(
-        'There have been more than 100 commits since the last release!'
-      );
-    }
-
-    const githubInfo = {
-      recentCommits,
-      lastReleasePublishedAt,
-      lastReleaseSHA,
-    };
-
-    this.setContext(githubInfo);
-
-    return githubInfo;
   }
 }
 
