@@ -1,3 +1,94 @@
+## wandb/local:0.9.43 (August 13, 2021)
+
+Changelog:
+* Prevent non-whitelisted domains from making CORS requests
+* Fixed bug preventing users from logging in
+* In Reports, fixed a bug that caused adding expressions to take a long time
+* In Reports, the copy link icons show up when hovering over the headers
+* Fixed the issue that the user can't undelete runs after deleting all the runs
+* Fixed an issue where pages could crash if a run didn't have a `wandb-metadata.json` file
+* In Reports, users can copy a hyperlink to a specific section on the view mode.
+* Flips the default order of values and name in the line plot legend
+* Makes the line plot legend smarter about truncating long legends
+* Removes run highlighting on the single run page
+* The slider for the video panels is now set to visible by default without the users having to click the setting button
+* Artifact Graph now automatically hides source code assets
+* Fixed image rendering pixelation in firefox
+* Updated sweep validation warnings
+* Added "Horizontal rule" to the slash menu in Reports
+* In Reports, users can add a table of contents that contains a list of links to headings
+* Fixed inserting images to panel grid markdown in Reports
+* Fixed an issue that caused StringCompare panels to be very slow on large inputs.
+* Fixed Netron Viewer in Artifacts / Tables
+* Made direct OIDC authentication possible in local servers
+* Added a session length configuration option for local servers
+* Moved the existing OIDC callback url from "/login" to "/oidc/callback" (existing Auth0 tenants will need to update the allowed callback urls)
+* Allow users to sort panels alphabetically in sections
+* Added createdBy, metadata, aliases, and link properties to artifact versions in Weave
+* Added verbose S3 logging, enabled by the `S3_LOG_VERBOSE` env var
+* Tables: Added "remove all right" and "remove all left" column menu options
+* Tables: Added ability to access a project's runs via `project.runs`
+* Added the ability to configure SSL and path style when using an S3-compatible bucket store
+* Fix display of runtime value when syncing from offline mode
+* Officially dropped support for IE11
+* Fixed artifacts issues when using third party S3-compatible object stores
+* Typing a bracket now completes bracket expressions in the Weave expression editor
+* The left/right arrows can now skip back and forth between nodes in the Weave expression editor
+* Tables now show run colors on all bar plots
+* In Reports, users can now add a checklist from the slash dropdown menu
+* Fixed cursor behavior when adding a checklist in Report
+* Users can now properly compare files using Weave Query.
+* Fixed bug causing Tables in full screen mode to overflow
+* In Reports, error messages are now shown in the specific panel grid where the error was triggered, instead of the whole report page
+* Fixed bug preventing run tables logged with older clients from being queried from Weave
+* Joined tables now properly show bar chart colors when the column is a list
+* Tables now support Molecule media type
+* Fixed issue with Artifact Creation when client loses the request connection
+* Fixed an issue with the line plot where the config can get into an invalid state
+* Fixed an issue with the run files explorer which can cause viewing files to fail
+* In Reports, added the ability to link to a specific section
+* Users can now drag and drop a panel in the Report's panel grid without moving up the panels below
+* Added "gallery blocks" in the report editor, where each card in the gallery will link to another report
+* Fixed an issue that could cause undeleting runs to sometimes fail
+* GIFs are now allowed as report preview images
+* Fixed bug causing excessive network requests when rendering Vega plots
+* Default Table View for Run Workspace fixed to concat rather than potentially join.
+* PanelWeave now loads runs from all active Runsets
+* Tables now support concat on Grouped Joins
+* In Reports, a user can add a callout box by typing `>>> ` or `/callout`.
+* Fixed an issue that could cause distributed artifacts with retrying writers to fail during the commit flow.
+* Fixed bug that caused invalid URLs to be highlighted in tables
+* Fixed bug that caused Audio Wave Forms to render behind sticky columns and headers
+* Increase maximum metrics payload size per `wandb.log` call from 4MB to 10MB
+* Fixed sizing bug on Table cells showing a list of objects
+* Fixed bug in Tables where some string values did not appear as possible suggestions
+* Table Panels rendered with Weave now filter out empty runs.
+* Upgraded Ray to 4.1 to address CVE-2021-33503
+* Pinned urllib3>=1.26.5 to address CVE-2021-33503
+* In Reports, snake_case no longer gets converted to italics. (e.g. 1_2_3 stays the same without italicizing 2)
+* In line plots with a single line, the line will no longer thicken when its run is highlighted
+* Improved styling of highlighted runs in the runs table
+* For artifacts with no metadata, a link to the docs explaining how to set metadata is now shown on the Metadata tab
+* In artifact page, the Used By table is now hidden if the artifact is not consumed by any runs
+* Fixed bug that caused some artifacts to appear to take up more disk space than they actually did
+* Small plots now hide the run legend for better readability
+* Fixed bug that made artifacts inaccessible on a project after the project was moved to a different user or organization
+* Run selector now shows a warning when user attempts to change visibility of a run that's outside the current bounds of a parallel coordinate chart or scatter plot
+* Fixed bug that caused some Tables to incorrectly render as empty
+* Fixed bug that caused panels to change from line plots to bar charts when timestamp values were entered as min/max
+* Projects a user does not own and has not contributed runs to will no longer appear on their profile page
+* In multi-run line plots, the legend is now displayed by default
+* Fixed bug that made sweep configs containing certain parameter names unparseable
+* Fixed bug that caused the app to crash when copy/pasting from Apple Notes
+* Extended artifacts JSON parser to allow for non-standard Infinity value in Python's generated JSON
+* Fixed bug that caused errors when interacting with some dropdowns
+* Fixed header indentation in Reports
+* Fixed bug that caused runs to rener in parallel coordinates chart even if disabled in the runset
+* Fixed a bug that caused pinned columns in tables to always appear to the left of other columns
+* Improved run grouping functionality
+
+
+
 ## wandb/local:0.9.42 (June 30, 2021)
 
 * Added support for authentication via Google Identity-Aware Proxy
