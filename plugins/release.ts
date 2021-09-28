@@ -143,7 +143,7 @@ class WandbPlugin extends Plugin {
       > = [];
 
       for (const commit of commitsSinceLastRelease) {
-        await sleep(100);
+        await sleep(50);
         const notes = await autoReleaseNotes.getReleaseNotesForCommit(
           this.octokit,
           'wandb',
@@ -152,21 +152,6 @@ class WandbPlugin extends Plugin {
         );
         commitsWithReleaseNotes.push([commit, notes]);
       }
-
-      // const commitsWithReleaseNotes = await Promise.all(
-      //   commitsSinceLastRelease.map(
-      //     async (commit) =>
-      //       [
-      //         commit,
-      //         autoReleaseNotes.getReleaseNotesForCommit(
-      //           this.octokit,
-      //           'wandb',
-      //           'core',
-      //           commit
-      //         ),
-      //       ] as const
-      //   )
-      // );
 
       const allReleaseNotes = compact(
         commitsWithReleaseNotes.map(([_, releaseNotes]) => releaseNotes)
