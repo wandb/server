@@ -1,3 +1,88 @@
+## wandb/local:0.9.44 (September 28, 2021)
+
+* Fixed bug where an external S3 object store wouldn't connect over tls
+* Local supports being run under a sub-path of an existing domain, i.e. https://mycompany.com/wandb
+* Local supports custom headers for authentication when running behind a proxy
+* Fix a UI crash on organization dashboards.
+* Adds new shortcuts for commands in Report editing mode
+* Move default entity into its own category in home page sidebar
+* Fix issue where some runqueues would not show up in launch config modal
+* Media panel now shows a more informative error message when handling non-media values.
+* Add option to filter runs by artifact
+* Prevent non-admins from deleting projects
+* Fixes a bug where users' sweeps may have duplicate runs
+* Return error if run names already exist in destination project when moving runs
+* Allow entering arbitrary string literals in the Weave expression editor.
+* Responsive styles for the controls image overlay
+* Render image placeholder when image in media panel changes
+* Fixes an issue where grid search sweeps terminated prematurely
+* Fixes a bug where resuming a grid search sweep would cause it to restart instead of picking up where it left off
+* Fixes a bug where the media panel would endlessly send requests to the server.
+* Fixes a race condition in preemptible sweeps that sometimes caused preempted runs to not be retried
+* Users can now view the PyTorch Profiler tab inside Tensorboard in W&B UI, if they use the client library in conjunction with PyTorch to profile their code.
+* Weave expressions now support `argmin` and `argmax`
+* Fixed crash with image mask controls for masks with numeric labels.
+* Fixed an issue where requests could fail for artifacts under deleted projects
+* Weave Plot infers colors more intelligently
+* Fix the issue with the onboarding survey where users can skip it with the browser's "back" button.
+* Update the run's text colors (e.g. tooltip, legend) to be more accessible.
+* Table of Contents can include different levels of headers in the Reports.
+* Improves performance of sweeps by implementing them with run queues
+* Fixed a bug that sometimes prevented Weave panels from loading.
+* Improved iframe rendering when viewing runs in Jupyter
+* Allow reports to be embedded as iframes in tools like Confluence
+* Better error messages when access is denied to a resource in iframes
+* Upgraded our LaTeX rendering engine to address a possible command injection vulnerability.
+* Improves accuracy and utility of validation/suggestions in Monaco sweep editor in the UI
+* Improve resource usage of artifact overview page
+* Fixes the Code Comparer panel when used in a cross-project run set.
+* Users without usernames can be deleted from the admin dashboard
+* Update to WBButton component (only visible in storybook)
+* Enable reordering in the runs grouping selector.
+* Update the run's color to be more accessible.
+* Enable support for anonymous functions in Weave expression editor
+* W&B Tables can now leverage web workers to speed up computations!
+* Fixes issue where fullscreen charts overflow the bottom of the page
+* New improved sweep engine
+* Users with `@` in their artifact type names won't have broken links anymore
+* Fixes the "add visualization" preview not showing proper data, sometimes showing nothing.
+* Fix bug in Weave expression editor where pressing space after a number replaced the entire expression with that number.
+* Made the artifact sidebar resizable
+* Changes made only affect new WB components, no existing ones.
+* Update launch tab icon
+* Improve run queue tab UI
+* Improve performance of merging partial manifests
+* Artifact Graph view now has the option to show/hide automatically generated Artifacts.
+* Instance Activity Dashboard is now available! Navigate to `https://<your-wandb-host>/admin/usage` to try it out! (requires admin access and license upgrade)
+* Users can programmatically fetch reports using API with pagination.
+* On a user's profile page, hide the "Likes" tab if the user hasn't liked any reports yet.
+* Fixed performance issues when loading the storage explorer with a large number of artifacts.
+* Add public API examples to the project overview page.
+* In Team settings, disable adding an existing team member.
+* In Reports, don't show the "Write caption..." section when dragging the image in the view mode.
+* In Reports, editors can change the visibility of the run sets in the panel grid for the saved reports.
+* Storage explorer url changes from `/storage/entityName` to `/usage/entityName`
+* Fixes a bug in grid search where arrays of yaml objects were not properly handled
+* Prevent all pages except run overview from being embedded in an iframe
+* Fixes an issue in sweeps were constant parameters were not handled in grid search
+* Disabled image resizing in the reports.
+* Weave Panel in Reports no longer automatically grabs focus and scroll page
+* TracerPanel no longer automatically grabs focus and scroll page
+* Removed TracerPanel's unnecessary scroll bar
+* Weave ops that accept functions can now use inner ops that consume tags.
+* Images/Videos/Media will no longer break after the direct URLs expire
+* Fixes line plot legend positioning with east/west configuration
+* Fixes safari issues with line plots
+* Users can now use `.run` and `.project` in Tables and Weave to retrieve the source object.
+* Tables which are the concatenation of tables from multiple runs will now automatically show the run name
+* Fixes style bugs affecting icons.
+* Grouped line plots will have a more subtle transition to highlighted state - increases legibility.
+* Adds back the legends for box plot and violin plot
+* When navigating to an Artifact file, users would previously see "no preview" before the file successfully loads. Now, a loading indicator is presented.
+* Fixed the link for "used by" runs in the Artifacts page.
+* Add validation to entity and team names
+
+
 ## wandb/local:0.9.43 (August 13, 2021)
 
 Changelog:

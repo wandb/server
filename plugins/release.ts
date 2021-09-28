@@ -131,20 +131,42 @@ class WandbPlugin extends Plugin {
         (commit) => commit.sha === targetSHA
       );
 
-      const commitsWithReleaseNotes = await Promise.all(
-        commitsSinceLastRelease.map(
-          async (commit) =>
-            [
-              commit,
-              await autoReleaseNotes.getReleaseNotesForCommit(
-                this.octokit,
-                'wandb',
-                'core',
-                commit
-              ),
-            ] as const
-        )
-      );
+      const sleep = (time: number) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            resolve('resolved');
+          }, time);
+        });
+
+      const commitsWithReleaseNotes: Array<
+        [autoReleaseNotes.Commit, string[] | null]
+      > = [];
+
+      for (const commit of commitsSinceLastRelease) {
+        await sleep(100);
+        const notes = await autoReleaseNotes.getReleaseNotesForCommit(
+          this.octokit,
+          'wandb',
+          'core',
+          commit
+        );
+        commitsWithReleaseNotes.push([commit, notes]);
+      }
+
+      // const commitsWithReleaseNotes = await Promise.all(
+      //   commitsSinceLastRelease.map(
+      //     async (commit) =>
+      //       [
+      //         commit,
+      //         autoReleaseNotes.getReleaseNotesForCommit(
+      //           this.octokit,
+      //           'wandb',
+      //           'core',
+      //           commit
+      //         ),
+      //       ] as const
+      //   )
+      // );
 
       const allReleaseNotes = compact(
         commitsWithReleaseNotes.map(([_, releaseNotes]) => releaseNotes)
