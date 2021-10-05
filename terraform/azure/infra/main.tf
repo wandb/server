@@ -121,7 +121,8 @@ resource "azurerm_web_application_firewall_policy" "wandb" {
           "942200",
           "942260",
           "942340",
-          "942370"
+          "942370",
+          "942440"
         ]
       }
       rule_group_override {
