@@ -1,3 +1,46 @@
+## wandb/local:0.9.45 (November 4, 2021)
+
+* Media Panel: fix popup dialogs rendering off-screen
+* Media Panel: add bounding boxes to single image full-screen mode
+* Media Panel now properly renders molecule objects
+* Tables now supports displaying timestamps as dates.
+* Fixed a bug that prevented keyboard navigation of autocomplete suggestions in Weave Expressions inside of a report while the report was being edited.
+* Fixed a bug where the user could enter an infinite redirect loop on local
+* Project workspaces now support undo/redo hotkeys: Cmd+Z/Cmd+Shift+Z for Mac and Ctrl+Z/Ctrl+Shift+Z for other platforms.
+* Added new quickstart instructions on home, blank project, and blank team pages
+* Media Panel now has more conservative requesting of file URLs, preventing `Generate credentials request` errors.
+* Fixed a bug where prior sweep runs were not properly accounted for on run queue initialization
+* Users can now swap artifacts in launch config modal
+* Fixed Media Panel fullscreen mode to never stretch an image's aspect ratio
+* Fixed Media Panel fullscreen image to never overflow outside of the modal
+* Media Panel now properly renders GIFs
+* Fixed bug where pressing delete in an empty Weave expression editor made it impossible to add to the expression.
+* Fixed the styling of report comments in mobile.
+* Weave Panels now respect Runset ordering
+* Fixed bug that prevented Weave Panels in workspaces from supporting `run.summary["`...
+* Fixed an issue where S3 references to multi-part uploaded files could cause page crashes
+* Fixed a UI crash affecting images with bounding boxes in Tables
+* Fixed timeout after deleting runs with lots of artifacts
+* Fixed bug in Weave editor where string literals would not show replacement suggestions after refocusing a completed string.
+* Media Panel: Image download now properly includes bounding boxes.
+* Allow swapping artifacts in launch config modal
+* Weave Plot can now plot dimensions with escaped dots.
+* Weave Plot now supports numeric and boolean labels
+* Users can now add Weave Panels directly to reports using `/weave`
+* Stabilized exporting image masks from Artifacts to Weave Panels
+* Added `<` and `>` operators to Weave
+* Improved Weave expression editor autocomplete experience in cases where multiple ops match the entered text
+* W&B Tables: New string operations are now available!
+* Fixed the close/remove and down arrows not appearing in firefox and safari
+* Fixed bug where recreated user's invite link would point to previously deleted user
+* Added copyable embed iframe code in the "share reports" popup.
+* Fixed a bug which caused reports to show "context deadline exceeded" error when left open for a long time.
+* Fixed bug that caused incorrect parsing of some `s3://` bucket URLs
+* Users will no longer see "you're leaving" page alerts when starting a discussion
+* Beta: Users can now generate Plots from their logged Tables and/or Weave Queries. See https://docs.wandb.ai/ref/app/features/panels/weave for details.
+* Shows a better error message when user tries creating a public project in an entity that requires projects be private
+
+
 ## wandb/local:0.9.44 (September 28, 2021)
 
 * Fixed bug where an external S3 object store wouldn't connect over tls
