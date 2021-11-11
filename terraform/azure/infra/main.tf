@@ -126,9 +126,22 @@ resource "azurerm_web_application_firewall_policy" "wandb" {
         ]
       }
       rule_group_override {
+        rule_group_name = "REQUEST-941-APPLICATION-ATTACK-XSS"
+        disabled_rules = [
+          "941101"
+        ]
+      }
+      rule_group_override {
         rule_group_name = "REQUEST-920-PROTOCOL-ENFORCEMENT"
         disabled_rules = [
-          "920300"
+          "920300",
+          "920440"
+        ]
+      }
+      rule_group_override {
+        rule_group_name = "REQUEST-913-SCANNER-DETECTION"
+        disabled_rules = [
+          "913101"
         ]
       }
     }
@@ -313,7 +326,7 @@ resource "azurerm_mysql_server" "wandb" {
   administrator_login_password = var.db_password
 
   sku_name   = "GP_Gen5_4"
-  storage_mb = 5120
+  storage_mb = 10240
   version    = "5.7"
 
   auto_grow_enabled                 = true
