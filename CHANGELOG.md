@@ -1,3 +1,30 @@
+## wandb/local:0.9.46 (November 23, 2021)
+
+Changelog:
+* updatedAt and heartbeatAt timestamps are now formatted
+* Users will now see a message when they access a team page they're not a part of
+* Fix misaligned panels in reports.
+* Weave UI: Supports mixed classes in bounding box and image mask annotation layers
+* Runs Table: fixed bug where scrollbar wasn't hidden in Firefox, IE, and Edge.
+* Grid search sweeps no longer terminate until all items except terminator have been CLAIMED
+* Team Page: fix overflowing link to subscriptions page.
+* New Project Page: public projects can no longer be created in private-only teams.
+* Uppercase letters are now allowed when renaming projects in the UI
+* Runs Table: hide run editing controls for viewers of public projects.
+* Workspaces: fix issue where the default workspace was not being updated after copying another workspace to default.
+* Media Panel: fix HTML viewer crash
+* Media Panel: fixes Plotly not rendering in very small panels
+* Fix artifact download button not downloading the file in cross-origin setups
+* Fix malformed text in the new user footer.
+* Users will now see a 'Get Started' guide on an empty Home page
+* Media Panel: fix misplaced bounding boxes / masks when logging multiple media sizes in a single step
+* Weave Tables are now slimmer and more user friendly
+* Reports with empty titles will now display as "(Untitled)" so that they're clickable
+* Media Panel: disable broken 3D renderer fullscreen mode on Safari
+* Media Panel: fix step slider getting configured to a nonexistent step
+* Media Panel: video files are now sized to fit the panel like images
+
+
 ## wandb/local:0.9.45 (November 4, 2021)
 
 * Media Panel: fix popup dialogs rendering off-screen
