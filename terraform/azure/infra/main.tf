@@ -119,7 +119,9 @@ resource "azurerm_web_application_firewall_policy" "wandb" {
         rule_group_name = "REQUEST-942-APPLICATION-ATTACK-SQLI"
         disabled_rules = [
           "942200",
+          "942210",
           "942260",
+          "942450",
           "942340",
           "942370",
           "942440"
@@ -128,7 +130,8 @@ resource "azurerm_web_application_firewall_policy" "wandb" {
       rule_group_override {
         rule_group_name = "REQUEST-941-APPLICATION-ATTACK-XSS"
         disabled_rules = [
-          "941101"
+          "941101",
+          "941120"
         ]
       }
       rule_group_override {
