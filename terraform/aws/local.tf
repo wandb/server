@@ -8,6 +8,12 @@ variable "global_environment_name" {
   type        = string
 }
 
+variable "dns_name" {
+  description = "A DNS name for Wandb services"
+  type        = string
+  default     = "nearmaplabs.com"
+}
+
 variable "aws_region" {
   description = "The AWS region in which to place the resources."
   type        = string
@@ -65,6 +71,7 @@ module "infra" {
   source = "./infra"
 
   global_environment_name    = var.global_environment_name
+  dns_name                   = var.dns_name
   aws_region                 = var.aws_region
   db_password                = var.db_password
   deployment_is_private      = var.deployment_is_private

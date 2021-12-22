@@ -17,6 +17,11 @@ variable "global_environment_name" {
   type        = string
 }
 
+variable "dns_name" {
+  description = "A DNS name for Wandb services"
+  type        = string
+}
+
 variable "aws_region" {
   description = "The AWS region in which to place the resources."
   type        = string
@@ -445,16 +450,65 @@ resource "aws_lb_target_group" "wandb_tg" {
   }
 }
 
+data "aws_route53_zone" "public" {
+  name         = var.dns_name
+  private_zone = false
+}
+
+resource "aws_route53_record" "wandb" {
+  zone_id = data.aws_route53_zone.public.zone_id
+  name    = "${var.global_environment_name}.${data.aws_route53_zone.public.name}"
+  type    = "A"
+  alias {
+    name                   = aws_lb.wandb.dns_name
+    zone_id                = aws_lb.wandb.zone_id
+    evaluate_target_health = false
+  }
+}
+
+resource "aws_acm_certificate" "wandb" {
+  domain_name       = aws_route53_record.wandb.fqdn
+  validation_method = "DNS"
+
+  tags = {
+    Name = "wandb-cert"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route53_record" "cert_validation" {
+  allow_overwrite = true
+  name            = tolist(aws_acm_certificate.wandb.domain_validation_options)[0].resource_record_name
+  records         = [ tolist(aws_acm_certificate.wandb.domain_validation_options)[0].resource_record_value ]
+  type            = tolist(aws_acm_certificate.wandb.domain_validation_options)[0].resource_record_type
+  zone_id  = data.aws_route53_zone.public.id
+  ttl      = 60
+}
+
+# This tells terraform to cause the route53 validation to happen
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn         = aws_acm_certificate.wandb.arn
+  validation_record_fqdns = [ aws_route53_record.cert_validation.fqdn ]
+}
+
+
+
 resource "aws_lb_listener" "wandb_listener" {
   load_balancer_arn = aws_lb.wandb.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
+  certificate_arn   = aws_acm_certificate_validation.cert.certificate_arn
+
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.wandb_tg.arn
   }
 }
+
 
 resource "aws_autoscaling_attachment" "wandb" {
   autoscaling_group_name = aws_eks_node_group.eks_worker_node_group.resources[0].autoscaling_groups[0].name
