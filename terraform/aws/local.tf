@@ -37,6 +37,13 @@ variable "deployment_is_private" {
   default     = false
 }
 
+
+variable "kubernetes_version" {
+  description = "Kubernetes version to use with aws_eks_cluster and node group."
+  type        = string
+  default     = "1.18"
+}
+
 variable "kubernetes_api_is_private" {
   description = "If true, the kubernetes API server endpoint will be private."
   type        = bool
@@ -72,6 +79,7 @@ module "infra" {
   vpc_cidr_block             = var.vpc_cidr_block
   public_subnet_cidr_blocks  = var.public_subnet_cidr_blocks
   private_subnet_cidr_blocks = var.private_subnet_cidr_blocks
+  kubernetes_version         = var.kubernetes_version
 }
 
 module "kube" {

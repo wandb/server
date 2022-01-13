@@ -34,6 +34,12 @@ variable "deployment_is_private" {
   default     = false
 }
 
+variable "kubernetes_version" {
+  description = "Kubernetes version to use with aws_eks_cluster and node group."
+  type        = string
+  default     = "1.18"
+}
+
 variable "kubernetes_api_is_private" {
   description = "If true, the kubernetes API server endpoint will be private."
   type        = bool
@@ -208,7 +214,7 @@ resource "aws_security_group" "eks_master" {
 resource "aws_eks_cluster" "wandb" {
   name     = "wandb"
   role_arn = aws_iam_role.wandb_cluster_role.arn
-  version  = "1.18"
+  version  = var.kubernetes_version
 
   vpc_config {
     endpoint_private_access = true
@@ -363,6 +369,7 @@ resource "aws_eks_node_group" "eks_worker_node_group" {
   node_group_name = "wandb-eks-node-group"
   node_role_arn   = aws_iam_role.wandb_node_role.arn
   subnet_ids      = aws_subnet.wandb_private[*].id
+  version         = var.kubernetes_version
 
   scaling_config {
     desired_size = 1
