@@ -176,6 +176,13 @@ resource "kubernetes_deployment" "wandb" {
               port = "http"
             }
           }
+          startup_probe {
+            http_get {
+              path = "/ready"
+              port = "http"
+            }
+            failure_threshold = 60
+          }
 
           resources {
             requests = {
