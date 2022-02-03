@@ -276,7 +276,7 @@ resource "azurerm_kubernetes_cluster" "wandb" {
   default_node_pool {
     name               = "default"
     node_count         = 2
-    vm_size            = "Standard_D4s_v3"
+    vm_size            = "Standard_D4s_v5"
     vnet_subnet_id     = azurerm_subnet.backend.id
     type               = "VirtualMachineScaleSets"
     availability_zones = ["1", "2"]
