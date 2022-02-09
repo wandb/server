@@ -1,3 +1,55 @@
+## wandb/local:0.9.48 (February 9, 2022)
+
+* wandb/local now supports `docker restart`
+* Fix team page leaderboard loading state
+* Signup flow: Fix broken "login with a different email" link.
+* Split up team/user queries for improved performance on team pages
+* Adds Weave Support to Pickup Timestamp from Python
+* Project Access: fix bug where users were unable to edit privacy settings of personal projects.
+* Project privacy settings: clearer text + new prompts
+* Create Team flow: Fix edge cases leading users to error states.
+* New "Create Report" prompt to nudge users to try out reports.
+* Fix open project icon
+* Onboarding Flow: Add nav dropdown to enable logging out
+* Handle delete active runs more gracefully in web app
+* When sweep is deleted, corresponding artifacts are deleted.
+* Bugfix: Login redirect on private routes
+* Gracefully handle login error
+* Prevent deleting active runs in the backend
+* Add pagination to grouped runs
+* Add "Create report" button to workspace reports tab.
+* Text change in Add Existing project modal to be more accurate
+* users will see a clearer message when the chosen org name is unavailable
+* Onboarding flow redesign
+* link ssl setup in python client dev docs
+* add support for image arrays with file paths in history
+* Quickstart Page: Update PyTorch Colab to new version.
+* fixed developer set up instructions
+* SSO logins will provide dynamic callback URL's based on the original request for wandb/local
+* Customers can add self-signed certificates to the root trust authority in wandb/local
+* Fixed an issue where queries could fail for users who aren't logged in
+* Adds Weave Op: Not
+* Disable panel search autofocus in Jupyter notebooks
+* Fix paste behavior in expression editor
+* Plans now called Enterprise and Starter - Does not include changes to database
+* Scatter Plot: Fixed color gradient when Z axis is set to log scale.
+* Scatter Plot: Fixed running Y axis values.
+* Scatter Plot: Fixed navigation to cross-project runs on point click.
+* Reports: Always show top blank line with hint in edit mode
+* Team Page: Display current and invited members in sidebar
+* Bug Fix: Weave does not crash when the Artifact Sequence is missing / deleted.
+* Adds a landing page for Artifact Collections
+* Add popup to team sidebar explaining service accounts
+* Create Team flow: Filter out academic orgs from work-only org dropdown.
+* Adds repo insights page
+* Fix bug that caused breadcrumb navigation to sometimes not update.
+
+
+
+
+
+
+
 ## wandb/local:0.9.47 (January 13, 2022)
 
 * Fix issue with step and run sliders on custom charts
