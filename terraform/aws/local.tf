@@ -28,13 +28,20 @@ variable "db_password" {
 variable "wandb_version" {
   description = "The version of wandb to deploy."
   type        = string
-  default     = "0.9.45"
+  default     = "0.9.47"
 }
 
 variable "deployment_is_private" {
   description = "If true, the load balancer will be placed in a private subnet."
   type        = bool
   default     = false
+}
+
+
+variable "kubernetes_version" {
+  description = "Kubernetes version to use with aws_eks_cluster and node group."
+  type        = string
+  default     = "1.18"
 }
 
 variable "kubernetes_api_is_private" {
@@ -72,6 +79,7 @@ module "infra" {
   vpc_cidr_block             = var.vpc_cidr_block
   public_subnet_cidr_blocks  = var.public_subnet_cidr_blocks
   private_subnet_cidr_blocks = var.private_subnet_cidr_blocks
+  kubernetes_version         = var.kubernetes_version
 }
 
 module "kube" {

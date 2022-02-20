@@ -1,3 +1,138 @@
+## wandb/local:0.9.48 (February 9, 2022)
+
+* wandb/local now supports `docker restart`
+* Fix team page leaderboard loading state
+* Signup flow: Fix broken "login with a different email" link.
+* Split up team/user queries for improved performance on team pages
+* Adds Weave Support to Pickup Timestamp from Python
+* Project Access: fix bug where users were unable to edit privacy settings of personal projects.
+* Project privacy settings: clearer text + new prompts
+* Create Team flow: Fix edge cases leading users to error states.
+* New "Create Report" prompt to nudge users to try out reports.
+* Fix open project icon
+* Onboarding Flow: Add nav dropdown to enable logging out
+* Handle delete active runs more gracefully in web app
+* When sweep is deleted, corresponding artifacts are deleted.
+* Bugfix: Login redirect on private routes
+* Gracefully handle login error
+* Prevent deleting active runs in the backend
+* Add pagination to grouped runs
+* Add "Create report" button to workspace reports tab.
+* Text change in Add Existing project modal to be more accurate
+* users will see a clearer message when the chosen org name is unavailable
+* Onboarding flow redesign
+* link ssl setup in python client dev docs
+* add support for image arrays with file paths in history
+* Quickstart Page: Update PyTorch Colab to new version.
+* fixed developer set up instructions
+* SSO logins will provide dynamic callback URL's based on the original request for wandb/local
+* Customers can add self-signed certificates to the root trust authority in wandb/local
+* Fixed an issue where queries could fail for users who aren't logged in
+* Adds Weave Op: Not
+* Disable panel search autofocus in Jupyter notebooks
+* Fix paste behavior in expression editor
+* Plans now called Enterprise and Starter - Does not include changes to database
+* Scatter Plot: Fixed color gradient when Z axis is set to log scale.
+* Scatter Plot: Fixed running Y axis values.
+* Scatter Plot: Fixed navigation to cross-project runs on point click.
+* Reports: Always show top blank line with hint in edit mode
+* Team Page: Display current and invited members in sidebar
+* Bug Fix: Weave does not crash when the Artifact Sequence is missing / deleted.
+* Adds a landing page for Artifact Collections
+* Add popup to team sidebar explaining service accounts
+* Create Team flow: Filter out academic orgs from work-only org dropdown.
+* Adds repo insights page
+* Fix bug that caused breadcrumb navigation to sometimes not update.
+
+
+
+
+
+
+
+## wandb/local:0.9.47 (January 13, 2022)
+
+* Fix issue with step and run sliders on custom charts
+* Users can now configure SSO using the PKCE authentication method
+* Hovering over a function in a Weave expression will now display that function's documentation, if available.
+* Bug Fix: "Reset Table" in workspaces no longer crashes report
+* Modal on blank teams page which shows users how to import existing projects
+* Bug Fix: Double Joins (joining two join tables) in Weave now work properly.
+* Fix styling for "Ignore outliers" tooltip in Reports.
+* Reports: Add keyboard shortcuts to submit a comment.
+* Add tooltip labels to the workspace icon buttons (x axis, smoothing, settings).
+* Media Panel: improved performance
+* Bug Fix: Tables which were created from dataframes - and those dataframes had floating point columns will no longer crash.
+* Parallel Coordinates chart: Fix incorrect handling of string values.
+* Bug Fix: Weave sorting now respects nulls (treats as negative infinity)
+* Bug Fix: Weave tables load successfully when the end of a string in JSON has a backslash
+* Bug Fix: Weave `artifactVersion` method no longer errors when input parameter is partially entered.
+* Allow specifying which email addresses are allowed to authenticate over SSO
+* Workspace sections: After adding a chart, automatically switch to the first page where the chart is.
+* Panel Image Export: export to PDF option.
+* Sweeps: fix crash when the sweep name in the config is a nested value.
+* Scalar Chart: Fix crash when values are null.
+* Fixes an issue where runs hidden in the run table cannot be moved, deleted, or tagged.
+* Charts: Remove edit chart tooltip in read-only mode.
+* When deleting runs, it's now optional to delete their output artifacts
+* Media Panel: Tweak media sizing to prevent captions from being hidden
+* Chart Export: Exported images should look exactly like the in-app preview now
+* Custom Charts: Fix CSV export missing columns
+* Add 'create sweep' button is included on sweep list page
+* Fix code block comments styling
+* Add 'create sweep' button on the blank sweeps tab
+* Fix a runs table issue where select group/select all runs would ignore active filters and over-select runs.
+* Fix bug where some reports didn't render panels
+* Media Panel: Fix step slider not snapping to the available step values
+* Add spacing to the end of Logs to better indicate the end of the log lines
+* Add endpoint that can be used to force user logouts (after e.g. password resets)
+* Fix timeout deleting runs with many artifacts
+* Weave Panels support Embedding Projections
+* Charts: Fix `INVALID TIMESTAMP` being displayed for valid timestamps
+* Add a blank paragraph above panel grids
+* Focus on the first paragraph when the user lands on the reports page
+* Line Plot: Include summary in legend formatting instructions
+* Fix the report display where the content is at the center of the screen
+* Home Page: Fix case where a user's default entity would not be shown in their teams list in the sidebar
+* Reports: Fix links in Markdown blocks
+* Parallel Coordinates Chart: `Relative Time (Process)` values are now specially formatted as duration values
+* Parallel Coordinates Chart: Truncate axis titles based on chart width to prevent overlapping
+* Parallel Coordinates Chart: Line colors respect opacity set in custom gradient
+* Parallel Coordinates Chart: When hovering over multiple lines, lines with lower values in the last column take precedence
+* Parallel Coordinates Chart: Suggest user-defined summary values before wandb summary values when adding axes
+* Parallel Coordinates Chart: Move tooltip above mouse when hovering over bottom half of chart
+* Media Panel: Display informative error message when failing to display loaded video files
+* Added ability to reference report text from comments
+* Line Plot now displays NaN values for non-grouped runs
+* Fix issue where parallel coordinates plot selector doesn't appear with log values
+* Media Panel: fixes step being incorrectly configured for a run workspace after setting explicit step in another run workspace.
+* Fix crash when non-logged-in users try to expand the runs table
+* Fix agentHeartbeat to not fail with 500s when unable to acquire the redis lock in 15s
+* Fix `(details: invalid connection) and driver: bad connection in line` errors on initial migration
+* Format updatedAt and heartbeatAt timestamps
+* Line Plot: crosshair now properly overflows workspace container
+* Fix panel alignments for reports.
+* Weave UI: Supports mixed classes in bounding box and image mask annotation layers
+* Enforce minimum width for Runs Table sidebar.
+* Runs Table: properly hide scrollbar in Firefox, IE, and Edge.
+* Ensure grid search sweeps do not terminate until all items except terminator have been CLAIMED
+* Allow uppercase letters when renaming projects in the UI
+* Workspaces: fix issue where the default workspace was not being updated after copying another workspace to default.
+* Add agent tracking to launch tab
+* Media Panel: fix HTML viewer crash
+* Media Panel: fixes Plotly not rendering in very small panels
+* Fix artifact download button not downloading the file in cross-origin setups
+* Hide internal run queues on run queue tab
+* Fixes malformed text in the new user footer.
+* Media Panel: fix misplaced bounding boxes / masks when logging multiple media sizes in a single step
+* Weave Tables are now slimmer and more user friendly
+* Display "(Untitled)" for report's empty title to be clickable
+* Media Panel: disable broken 3D renderer fullscreen mode on Safari
+* Media Panel: fix step slider getting configured to a nonexistent step
+* Media Panel: fix misplaced bounding boxes / masks
+* Media Panel: video files are now sized to fit the panel like images
+
+
 ## wandb/local:0.9.46 (November 23, 2021)
 
 Changelog:
