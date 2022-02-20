@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    kubernetes = "~> 2.1.0"
+    kubernetes = "~> 2.8.0"
   }
 }
 
@@ -68,6 +68,16 @@ variable "azure_storage_key" {
 
 variable "frontend_host" {
   description = "The FQDN of the instance"
+  type        = string
+}
+
+variable "deployment_is_private" {
+  description = "If this deployment should be deployed privately"
+  type        = bool
+}
+
+variable "ssl_certificate_name" {
+  description = "The name of the SSL certificate that's been manually attached to the application gateway."
   type        = string
 }
 
@@ -176,6 +186,13 @@ resource "kubernetes_deployment" "wandb" {
               port = "http"
             }
           }
+          startup_probe {
+            http_get {
+              path = "/ready"
+              port = "http"
+            }
+            failure_threshold = 60
+          }
 
           resources {
             requests = {
@@ -217,15 +234,28 @@ resource "kubernetes_ingress" "wandb_ingress" {
   metadata {
     name = "wandb"
     annotations = {
-      "kubernetes.io/ingress.class"         = "azure/application-gateway"
-      "cert-manager.io/cluster-issuer"      = "issuer-letsencrypt-prod"
-      "cert-manager.io/acme-challenge-type" = "http01"
+      "kubernetes.io/ingress.class"                       = "azure/application-gateway"
+      "appgw.ingress.kubernetes.io/appgw-ssl-certificate" = var.ssl_certificate_name
+      "appgw.ingress.kubernetes.io/use-private-ip"        = var.deployment_is_private ? "true" : null
+      "cert-manager.io/cluster-issuer"                    = var.deployment_is_private ? null : "issuer-letsencrypt-prod"
+      "cert-manager.io/acme-challenge-type"               = var.deployment_is_private ? null : "http01"
     }
   }
   spec {
     tls {
-      hosts       = [local.host]
-      secret_name = var.tls_secret_name
+      hosts       = var.deployment_is_private ? null : [local.host]
+      secret_name = var.deployment_is_private ? null : var.tls_secret_name
+    }
+    rule {
+      http {
+        path {
+          path = "/"
+          backend {
+            service_name = "wandb"
+            service_port = 80
+          }
+        }
+      }
     }
     rule {
       host = local.host

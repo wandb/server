@@ -20,6 +20,12 @@ variable "deployment_is_private" {
   default     = false
 }
 
+variable "use_web_application_firewall" {
+  description = "If true, we'll provision a web application firewall for increased security"
+  type        = bool
+  default     = false
+}
+
 variable "kubernetes_api_is_private" {
   description = "If true, the kubernetes API server endpoint will be private."
   type        = bool
@@ -36,6 +42,12 @@ variable "public_subnet_cidr_blocks" {
   description = "CIDR blocks for the public VPC subnets. Should be a list of 1 CIDR blocks."
   type        = list(string)
   default     = ["10.10.0.0/24"]
+}
+
+variable "private_ip" {
+  description = "The IP address to use when the deployment is private, must be in the public_subnet_cidr_blocks"
+  type        = string
+  default     = "10.10.0.10"
 }
 
 variable "private_subnet_cidr_blocks" {

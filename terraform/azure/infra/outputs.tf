@@ -34,6 +34,14 @@ output "resource" {
   value = azurerm_public_ip.wandb.resource_group_name
 }
 
+output "virtual_network_id" {
+  value = azurerm_virtual_network.wandb.id
+}
+
+output "private_ip" {
+  value = azurerm_application_gateway.wandb.frontend_ip_configuration[1].private_ip_address
+}
+
 #output "private_ip" {
 #  value = data.azurerm_private_endpoint_connection.wandb_web.private_service_connection.0.private_ip_address
 #}
