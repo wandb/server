@@ -64,15 +64,15 @@ variable "deployment_is_private" {
 locals {
   host                = trimprefix(trimprefix(var.frontend_host, "https://"), "http://")
   private_annotations = <<ANN
-    ${var.ssl_certificate_name != null ? "appgw.ingress.kubernetes.io/appgw-ssl-certificate: ${var.ssl_certificate_name}" : ""}
+${var.ssl_certificate_name != null ? "appgw.ingress.kubernetes.io/appgw-ssl-certificate: ${var.ssl_certificate_name}" : ""}
     appgw.ingress.kubernetes.io/use-private-ip: "true"
   ANN
   public_annotations  = <<ANN
-    cert-manager.io/cluster-issuer: issuer-letsencrypt-prod
+cert-manager.io/cluster-issuer: issuer-letsencrypt-prod
     cert-manager.io/acme-challenge-type: http01
   ANN
   tls                 = <<TLS
-  tls:
+tls:
   - hosts:
     - ${local.host}
     secretName: ${var.tls_secret_name}
