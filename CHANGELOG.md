@@ -1,3 +1,26 @@
+## wandb/local:0.9.49 (February 24, 2022)
+
+* Created isNone weave Op
+* Internal: ArtifactCollectionMembership backend resource and Weave type created
+* Speed up CloneReportModal (and many other modals)
+* Fixes PanelDate in Weave to respect UTC timestamp
+* Fixed an issue where pages could crash when viewing user profiles
+* Bug Fix: `Merge Table` input type fix
+* Create Team: Fix "invalid privileges blob" error
+* Fix styling of billing modal's title that cut off at the bottom.
+* Local: Enable gzip compression for frontend assets, reducing bytes over the wire by about half!
+* Improve how Weave panels are displayed when importing to reports
+* Fixed an issue where image masks were displayed incorrectly when viewed in split mode
+* Fix resending email verification sign up emails
+* Onboarding Flow: Fix responsive styling issue.
+* Fixed bug where multiple modals have a warning Icon
+* Create Team flow: Make it short n' sweet.
+* Better rendering of nested JSON in run config & summary tables
+* Onboarding Flow: Make it easier to click on radio buttons and checkboxes.
+* Handle no photo teams in profile sidebar, add team title
+
+
+
 ## wandb/local:0.9.48 (February 9, 2022)
 
 * wandb/local now supports `docker restart`
