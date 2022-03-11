@@ -30,10 +30,14 @@ Check the source code of this repo to see all variables, at a minimum you should
 
 ### Optional
 
+- db_password - _The password used to connect to your database, you should probably override this_
 - lets_encrypt_email - _If you use lets encrypt to handle SSL we'll create a cluster issuer using this email address, see SSL below_
 - frontend_host - _By default we'll use the azure provided dns at envname.regionname.cloudapp.azure.com_
 - kubernetes_api_is_private - _By default the k8s control is on the internet, to make your installation more secure set this to true, see Private Control Plane below_
-- firewall_ip_address_allow - _By default we allow any IP address to log data and use our API's.  Providing a list of IP ranges will limit all programmatic access to those IP's.  Access to the UI will still be allowed from anywhere on the internet_
+- deployment_is_private - _By default we'll provision an IP address that's accessible on the internet.  Adding this flag will make the load balancer only listen on the VPC.  We can't provision SSL certificates in this mode, so you'll have to do it manually._
+- ssl_certificate_name - _If you're running the application privately, you'll need to configure an SSL certificate manually.  This variable attaches that certificate to the k8s ingress_
+- use_web_application_firewall - _When running the service on the internet, additional security can be provided by enabling a web application firewall. This will incur additional charges_
+- firewall_ip_address_allow - _By default we allow any IP address to log data and use our API's.  Providing a list of IP ranges will limit all programmatic access to those IP's.  Access to the UI will still be allowed from anywhere on the internet.  This only works when the web application firewall is enabled_
 
 ## Installation
 
@@ -45,6 +49,17 @@ terraform apply
 ```
 
 Be sure to save all `terraform.*` files in a safe place.
+
+## SSL
+
+If you don't have an SSL certificate we recommend using [lets-encrypt](https://letsencrypt.org).  Install cert manager with:
+
+```
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.7.1/cert-manager.yaml
+kubectl apply -f cert-issuer.yaml
+```
+
+> NOTE: You can't use cert manager when the deployment is private, see "Private Deployment SSL".
 
 ## Upgrades
 
@@ -75,19 +90,43 @@ If you can't connect to the VPN we output a `wandb.yaml` k8s manifest in the inf
 az aks command invoke -g $GLOBAL_ENV_NAME -n $GLOBAL_ENV_NAME-k8s -c "kubectl apply -f wandb.yaml" -f wandb.yaml
 ```
 
-## SSL
+## Private Deployments
 
-If you don't have an SSL certificate we recommend using lets-encrypt.  Install cert manager with:
+Setting `deployment_is_private` will make the load balancer only listen on the internal network.  You'll need to setup DNS and SSL manually.  After the terraform has completed you can use the private_ip to add an A record to your DNS service.
 
+> NOTE: Because of [current limitations](https://github.com/Azure/application-gateway-kubernetes-ingress/issues/741) with the way the Azure Application Gateway integrates with Azure Kubernetes Engine we must provision a public IP address.  When `var.deployment_is_private` we block all internet traffic to the public IP.
+
+### DNS
+
+When the deployment is private all we can provide is an IP address.  For SSL to work, you'll need to configure your internal DNS to resolve the IP address (10.10.0.10 by default).
+
+### Private Deployment SSL
+
+When the application is running privately we can not automatically provision SSL certificates.  You'll need to provision an SSL certificate yourself.  You should obtain a certificate from a trusted provider, using self-signed certificates will cause lot's of angst for your end users.
+
+Once you've obtained a trusted certificate see the [following documentation](https://azure.github.io/application-gateway-kubernetes-ingress/annotations/#appgw-ssl-certificate) for configuring it with your application gateway.  You'll need to set the `var.ssl_certificate_name` variable for it to be associated with your deployment.
+
+### VPC Peering
+
+If you're deploying this resource into an isolated VPC, you'll need to peer it with your existing VPC.
+You can find the wandb_vpc_id in the output of `terraform apply`.  Here's example terraform for configuring
+VPC peering:
+
+```terraform
+resource "azurerm_virtual_network_peering" "wandb" {
+  name                      = "my_virtual_network"
+  resource_group_name       = "my_resource_group"
+  virtual_network_name      = "wandb_network"
+  remote_virtual_network_id = outputs.wandb_vpc_id
+}
 ```
-kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.4.0/cert-manager.yaml
-kubectl apply -f cert-issuer.yaml
-```
 
-### References
+## References
 
+- https://azure.github.io/application-gateway-kubernetes-ingress
 - https://github.com/Azure/terraform-azurerm-appgw-ingress-k8s-cluster/blob/master/main.tf
 - https://github.com/gustavozimm/terraform-aks-app-gateway-ingress/blob/master/main.tf
 - https://blog.baeke.info/2020/10/25/
 - https://docs.microsoft.com/en-us/azure/application-gateway/ingress-controller-letsencrypt-certificate-application-gateway
 - https://docs.microsoft.com/en-us/azure/web-application-firewall/ag/create-custom-waf-rules
+- https://github.com/Azure/application-gateway-kubernetes-ingress/issues/741

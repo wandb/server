@@ -151,14 +151,43 @@ resource "azurerm_web_application_firewall_policy" "wandb" {
   }
 }
 
+resource "azurerm_network_security_group" "wandb" {
+  # The AKS Application Gateway ingress controller is only able to use a private IP
+  # if the gateway is using Standard_v2 or WAF_v2.  They both currently require
+  # a public IP, see: https://github.com/Azure/application-gateway-kubernetes-ingress/issues/741
+  # This rule blocks all internet access to the gateway and is only used if
+  # var.deployment_is_private
+  name                = "wandb-private-deployment-security-group"
+  location            = azurerm_resource_group.wandb.location
+  resource_group_name = azurerm_resource_group.wandb.name
+
+  security_rule {
+    name                       = "asg-required-management-ports"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "TCP"
+    source_port_range          = "*"
+    destination_port_range     = "65200-65535"
+    source_address_prefix      = "GatewayManager"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "wandb" {
+  count                     = var.deployment_is_private ? 1 : 0
+  subnet_id                 = azurerm_subnet.frontend.id
+  network_security_group_id = azurerm_network_security_group.wandb.id
+}
+
 resource "azurerm_application_gateway" "wandb" {
   name                = "wandb-appgateway"
   resource_group_name = azurerm_resource_group.wandb.name
   location            = azurerm_resource_group.wandb.location
 
   sku {
-    name     = "WAF_v2"
-    tier     = "WAF_v2"
+    name     = var.use_web_application_firewall ? "WAF_v2" : "Standard_v2"
+    tier     = var.use_web_application_firewall ? "WAF_v2" : "Standard_v2"
     capacity = 2
   }
 
@@ -180,6 +209,13 @@ resource "azurerm_application_gateway" "wandb" {
   frontend_ip_configuration {
     name                 = local.frontend_ip_configuration_name
     public_ip_address_id = azurerm_public_ip.wandb.id
+  }
+
+  frontend_ip_configuration {
+    name                          = "${local.frontend_ip_configuration_name}-private"
+    subnet_id                     = azurerm_subnet.frontend.id
+    private_ip_address_allocation = "Static"
+    private_ip_address            = var.private_ip
   }
 
   backend_address_pool {
@@ -209,7 +245,7 @@ resource "azurerm_application_gateway" "wandb" {
     backend_http_settings_name = local.http_setting_name
   }
 
-  firewall_policy_id = azurerm_web_application_firewall_policy.wandb.id
+  firewall_policy_id = var.use_web_application_firewall ? azurerm_web_application_firewall_policy.wandb.id : null
 
   depends_on = [
     azurerm_virtual_network.wandb,
@@ -235,6 +271,10 @@ resource "azurerm_application_gateway" "wandb" {
 data "azurerm_application_gateway" "wandb" {
   name                = "wandb-appgateway"
   resource_group_name = azurerm_resource_group.wandb.name
+
+  depends_on = [
+    azurerm_application_gateway.wandb
+  ]
 }
 
 
@@ -276,7 +316,7 @@ resource "azurerm_kubernetes_cluster" "wandb" {
   default_node_pool {
     name               = "default"
     node_count         = 2
-    vm_size            = "Standard_D4s_v5"
+    vm_size            = "Standard_D4s_v3"
     vnet_subnet_id     = azurerm_subnet.backend.id
     type               = "VirtualMachineScaleSets"
     availability_zones = ["1", "2"]
@@ -296,6 +336,7 @@ resource "azurerm_kubernetes_cluster" "wandb" {
     type = "SystemAssigned"
   }
 
+  # TODO: move outside of addon_profile to avoid breaking in 3.0
   addon_profile {
     http_application_routing {
       enabled = false
@@ -305,6 +346,7 @@ resource "azurerm_kubernetes_cluster" "wandb" {
       gateway_id = azurerm_application_gateway.wandb.id
     }
   }
+  automatic_channel_upgrade = "stable"
 
   private_cluster_enabled = var.kubernetes_api_is_private
 
@@ -339,6 +381,13 @@ resource "azurerm_mysql_server" "wandb" {
   public_network_access_enabled     = false
   ssl_enforcement_enabled           = true
   ssl_minimal_tls_version_enforced  = "TLS1_2"
+
+  lifecycle {
+    # The DB can scale, just use whatever value it's currently scaled to
+    ignore_changes = [
+      storage_mb
+    ]
+  }
 }
 
 resource "azurerm_mysql_database" "wandb" {

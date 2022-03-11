@@ -39,6 +39,11 @@ variable "storage_key" {
   type        = string
 }
 
+variable "ssl_certificate_name" {
+  description = "The name of the SSL certificate that's been manually attached to the application gateway."
+  type        = string
+}
+
 variable "tls_secret_name" {
   description = "The name of the k8s secret to use for SSL/"
   type        = string
@@ -51,8 +56,27 @@ variable "lets_encrypt_email" {
   default     = "sysadmin@wandb.com"
 }
 
+variable "deployment_is_private" {
+  description = "If this deployment should be deployed privately"
+  type        = bool
+}
+
 locals {
-  host = trimprefix(trimprefix(var.frontend_host, "https://"), "http://")
+  host                = trimprefix(trimprefix(var.frontend_host, "https://"), "http://")
+  private_annotations = <<ANN
+${var.ssl_certificate_name != null ? "appgw.ingress.kubernetes.io/appgw-ssl-certificate: ${var.ssl_certificate_name}" : ""}
+    appgw.ingress.kubernetes.io/use-private-ip: "true"
+  ANN
+  public_annotations  = <<ANN
+cert-manager.io/cluster-issuer: issuer-letsencrypt-prod
+    cert-manager.io/acme-challenge-type: http01
+  ANN
+  tls                 = <<TLS
+tls:
+  - hosts:
+    - ${local.host}
+    secretName: ${var.tls_secret_name}
+  TLS
 }
 
 resource "local_file" "wandb_kube" {
@@ -107,6 +131,11 @@ spec:
             httpGet:
               path: /ready
               port: http
+          startupProbe:
+            httpGet:
+              path: /ready
+              port: http
+            failureThreshold: 60
           resources:
             requests:
               cpu: "1500m"
@@ -133,14 +162,19 @@ metadata:
   name: wandb
   annotations:
     kubernetes.io/ingress.class: azure/application-gateway
-    cert-manager.io/cluster-issuer: issuer-letsencrypt-prod
-    cert-manager.io/acme-challenge-type: http01
+    ${var.deployment_is_private ? local.private_annotations : local.public_annotations}
 spec:
-  tls:
-  - hosts:
-    - ${local.host}
-    secretName: ${var.tls_secret_name}
+  ${var.deployment_is_private ? "" : local.tls}
   rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: wandb
+            port:
+              number: 80
   - host: ${local.host}
     http:
       paths:
