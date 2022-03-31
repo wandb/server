@@ -1,3 +1,72 @@
+## wandb/local:0.9.50 (March 31, 2022)
+
+* Fix regression affecting installs at domain subpaths
+* wandb/local now supports running against a MySQL 8 database
+* Auto populates the team entity and project on the launch config modal when a user has write access to the project
+* makes it so if a poorly formed config is pushed it just warns the user to fix, instead of hanging
+* SSO now supports ES256 id_token signatures
+* Add the functionality to change email types from the settings page
+* fix(weave): Projector Refinement No Longer Errors
+* fix(weave): 2nd Most Popular Weave Error: List Length Check was Buggy
+* fix(tables): Stop Infinite React Loops
+* Fixed an issue where subdomains in academic emails caused email validation to fail
+* Address TypeError in ImportPanelMenu comp
+* Add optional chaining to possibly null data var in HomePageWithData
+* hide delete options for default run queue
+* Project.ArtifactCollections Nil Pointer Fix
+* Fix bug that crashes code tab when Jupyter cell output contains markdown
+* Show email address in email verification message, to prevent typos in signups
+* Render plot of histograms in run summary table
+* Fixed a rare crash that could occur when fetching an artifact's aliases
+* Make custom charts searchable by title field
+* Fix crash when submitting FC post
+* Allow users to add emails
+* Check some metrics key to exist instead of all to exist to display panels in workspace
+* Changes the entrypoint type to string in the edit launch config modal.
+* Users will see a redesigned email when invited to a team
+* Fix inverted video colors in night mode
+* reduce time to mark launch agent crashed
+* allow users to create container jobs from the run queue tab
+* add resources for each of the integrations we've created
+* Weave: Panel config no longer closes when clicking on suggestions
+* Bug fix for stopping panels in a full screen modal from overflowing
+* Weave: Minor weave panel UI improvements
+* New Model / Artifact View behind feature flag
+* Project workspace: Fix UI performance for large number of runs
+* Prompt new users to create a team in onboarding flow
+* Fixed a bug in the usage simulation that uses actual compute hours instead of simulated ones.
+* turn off the aggressive behavior to lock users in subscription page
+* Update the text on the user sign up flow to ask for "Company or Institution" instead of "Organization"
+* [Internal] Internal W&B users can simulate the usage limit to audit the sales nudge bar in the W&B app
+* Tables: Minor style updates
+* when clicking the comment button underneath the report title, immediately open the comment box
+* Modified styles of the billing controls on the subscription page
+* Refactors GQL edges to support Artifact Collections
+* Return 500 status code instead of 200 on context deadline exceeded, for more accurate error rate reporting
+* Fixes empty image cells when viewing joined table
+* Use new Starter Tier 1 price ($50) for new customers to upgrade plan from trial and add an extra team member
+* Create Team: Fix organization name availability check
+* Fixed an issue that could cause runs queries from the public API to timeout on large projects
+* Upgrade to Material-UI 5 in wandb/ui and add button family components
+* Show documentation for Weave ops in a tooltip next to the autocomplete in the editor.
+* fix(local): Prefix absolute src urls so the site works under a sub-path (#9159) https://github.com/wandb/core/commit/31bee30c9d4706a8a08fcbc8c3579a493fb432ea
+* fix(local): allow disabling of dynamic host logic (#9126) https://github.com/wandb/core/commit/16e96a519679c44ae2f575108860efa1fae279b9
+* fix(weave): Weave Parallel Loop Bug (#9115) https://github.com/wandb/core/commit/4d3f4a4174066304ac717230bba64461dd401e85
+* feat(accounts): Prompt new team members to create project (#9088) https://github.com/wandb/core/commit/93c3085ab8bec52bfc1110ac5a7cc51af7f16de5
+* feat(backend): add ability to access-control GraphQL fields with directives (#9118) https://github.com/wandb/core/commit/f8b54db860ee1a8f0258cde8f31cab4a3ac2a8ef
+* feat(local): allow a super admin api key to be specified on boot. (#9097) https://github.com/wandb/core/commit/421afba368a4ecf59edf1d546137434f6bbd8ad6
+* fix(backend): fix modular-arithmetic panic in replica-choosing logic (#9116) https://github.com/wandb/core/commit/9168a22e25b8ee4ed74f77f0d055aaadb01acc98
+* fix(local): update base image to focal-1.2.0 (#9101) https://github.com/wandb/core/commit/dd03f4deafe43eb431b064684d0b57d4d80381a7
+* fix(weave): Repair some broken links in type documentation (#9110) https://github.com/wandb/core/commit/bf7c94bbf9d1c8abb2e26d761b83e357f2e9cff1
+* fix(weave): Weave Projector is Protected Against Too-Few Rows Error https://github.com/wandb/core/commit/792f429294e3974eb55c383111e912f76626e622
+* fix(dev): run prettier on subpath spec (#9105) https://github.com/wandb/core/commit/3928c872a1febf0f045e8ccd5f047279885afe06
+* fix(backend): stop `Run.Github` resolver panic when run has a funny repo URL (#9106) https://github.com/wandb/core/commit/3e8f96fa74393f9afe55bec16db9bbd68d573a52
+* feat(dashboard): remove '/unlimited' on the storage display pages (#9094) https://github.com/wandb/core/commit/cd085656258b41279128285972b4bb3c4fdd4a91
+* fix(weave): Properly handle missing artifact in all ops (#9085) https://github.com/wandb/core/commit/5891c2506f1a67a430cebf14698aed75a8c3967f
+* fix(app): FC post-launch tweaks (#9081) https://github.com/wandb/core/commit/c36123744e565c582c3600c5fcab73c8b95752b4
+* fix(weave): Parallel Summary/Config Requests No Long Crash Weave (#9080) https://github.com/wandb/core/commit/514d32b4f8711751cfb41099ae265582fc823531
+
+
 ## wandb/local:0.9.49 (February 24, 2022)
 
 * Created isNone weave Op
