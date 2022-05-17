@@ -1,6 +1,27 @@
-# W&amp;B Local
+<p align="center">
+  <img src=".github/wb-logo-lightbg.png#gh-light-mode-only" width="500" alt="Weights & Biases"/>
+  <img src=".github/wb-logo-darkbg.png#gh-dark-mode-only" width="500" alt="Weights & Biases"/>
+</p>
 
-W&amp;B Local is the self hosted version of Weights &amp; Biases.
+
+<h4 align="center">W&B Local is the self hosted version of Weights &amp; Biases.</h4>
+
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="https://github.com/jsbroks/coco-annotator/wiki">Wiki</a> •
+  <a href="https://github.com/jsbroks/coco-annotator/wiki/Getting-Started">Getting Started</a> •
+  <a href="https://github.com/jsbroks/coco-annotator/issues">Issues</a> •
+  <a href="#license">License</a>
+</p>
+
+---
+
+<p align="center">
+  <a href="https://hub.docker.com/r/wandb/local">
+    <img src="https://img.shields.io/docker/pulls/wandb/local.svg">
+  </a>
+</p>
+
 
 ## Quickstart
 
