@@ -4,7 +4,7 @@
 </p>
 
 
-<h4 align="center">W&B Local is the self hosted version of Weights &amp; Biases.</h4>
+<h3 align="center">Weights & Biases Local is the self hosted version of Weights &amp; Biases.</h3>
 
 <p align="center">
   <a href="#features">Features</a> •
@@ -17,8 +17,14 @@
 ---
 
 <p align="center">
+  <a href="https://github.com/wandb/local/releases">
+    <img src="https://img.shields.io/github/v/release/wandb/local">
+  </a>
+  <a href="https://github.com/wandb/local">
+    <img src="https://img.shields.io/github/last-commit/wandb/local">
+  </a>
   <a href="https://hub.docker.com/r/wandb/local">
-    <img src="https://img.shields.io/docker/pulls/wandb/local.svg">
+    <img src="https://img.shields.io/docker/pulls/wandb/local">
   </a>
 </p>
 
