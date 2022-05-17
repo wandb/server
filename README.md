@@ -13,19 +13,6 @@
   <a href="https://github.com/wandb/local/tree/main/terraform/azure">Azure Terraform</a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/wandb/local/releases">
-    <img src="https://img.shields.io/github/v/release/wandb/local">
-  </a>
-  <a href="https://github.com/wandb/local">
-    <img src="https://img.shields.io/github/last-commit/wandb/local">
-  </a>
-  <a href="https://hub.docker.com/r/wandb/local">
-    <img src="https://img.shields.io/docker/pulls/wandb/local">
-  </a>
-</p>
-
-
 ## Quickstart
 
 1. On a machine with [Docker](https://docker.com) and [Python](https://www.python.org/) installed, run:

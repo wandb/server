@@ -1,4 +1,4 @@
-# This terraform module has been deprecated please use our [new module](https://github.com/wandb/terraform-aws-wandb) instead.
+# This terraform module has been deprecated, please use our [new module](https://github.com/wandb/terraform-aws-wandb) instead.
 
 ## Installing W&B Local in AWS
 
