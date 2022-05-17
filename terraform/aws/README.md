@@ -1,3 +1,6 @@
+> **Deprecated**: This terraform module has been deprecated please use our [new
+> module](https://github.com/wandb/terraform-aws-wandb) instead.
+
 # Installing W&B Local in AWS
 
 This repo contains a terraform stack you can use to deploy your very own W&B Local instance into your AWS account.
