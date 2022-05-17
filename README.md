@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Weights & Biases Local</h1>
-<h3 align="center">Weights & Biases Local is the self hosted version of Weights &amp; Biases.</h3>
+<h4 align="center">Weights & Biases Local is the self hosted version of Weights &amp; Biases.</h4>
 
 <p align="center">
   <a href="https://github.com/wandb/local/releases">
