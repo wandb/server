@@ -1,6 +1,9 @@
+<p align="center">
+  <img src=".github/wb-logo.png" width="75" alt="Weights & Biases"/>
+</p>
 
-<h1 align="center">Weights & Biases Local</h1>
-<h3 align="center">W&B Local is the self hosted version of Weights &amp; Biases.</h3>
+
+<h3 align="center">Weights & Biases Local is the self hosted version of Weights &amp; Biases.</h3>
 
 <p align="center">
   <a href="#features">Features</a> •
