@@ -2,18 +2,8 @@
   <img src=".github/wb-logo.png" width="75" alt="Weights & Biases"/>
 </p>
 
-
+<h1 align="center">Weights & Biases Local</h1>
 <h3 align="center">Weights & Biases Local is the self hosted version of Weights &amp; Biases.</h3>
-
-<p align="center">
-  <a href="#features">Features</a> •
-  <a href="https://github.com/jsbroks/coco-annotator/wiki">Wiki</a> •
-  <a href="https://github.com/jsbroks/coco-annotator/wiki/Getting-Started">Getting Started</a> •
-  <a href="https://github.com/jsbroks/coco-annotator/issues">Issues</a> •
-  <a href="#license">License</a>
-</p>
-
----
 
 <p align="center">
   <a href="https://github.com/wandb/local/releases">
