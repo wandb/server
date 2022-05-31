@@ -191,7 +191,7 @@ KUBE
 resource "local_file" "wandb_kube_ssl" {
   filename = "cert-issuer.yaml"
   content  = <<KUBE
-apiVersion: cert-manager.io/v1alpha2
+apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
   name: issuer-letsencrypt-prod

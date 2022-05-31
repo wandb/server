@@ -30,6 +30,9 @@ locals {
 resource "azurerm_resource_group" "wandb" {
   name     = var.global_environment_name
   location = var.region
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "azurerm_virtual_network" "wandb" {
