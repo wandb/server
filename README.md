@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Weights & Biases Local</h1>
-<h4 align="center">W&B Local is the self hosted version of Weights &amp; Biases.</h4>
+<h4 align="center"> Server is the self hosted version of Weights &amp; Biases.</h4>
 
 <p align="center">
   <a href="#Quickstart">Quickstart</a> •
@@ -18,10 +18,10 @@
 1. On a machine with [Docker](https://docker.com) and [Python](https://www.python.org/) installed, run:
     ```
     1 pip install wandb --upgrade
-    2 wandb local
+    2 wandb wandb server start
     ```
 2. Generate a free license from the [Deployer](https://deploy.wandb.ai/).
-3. Add it to your local settings.
+3. Add it to your W&amp;B Server's localhost's settings.
 
   **Paste the license in the /system-admin page on your localhost**
   
@@ -30,7 +30,7 @@
 
 ## Docker
 
-Running `wandb local` will start our server and forward port 8080 on the host.
+Running `wandb server start` will start our server and forward port 8080 on the host.
 To have other machines report metrics to this server run: `wandb login
 --host=http://X.X.X.X:8080`.  You can also configure other machines with the
 following environment variables:
