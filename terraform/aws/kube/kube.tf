@@ -108,7 +108,7 @@ resource "kubernetes_deployment" "wandb" {
           }
           env {
             name  = "BUCKET"
-            value = "s3:///${var.file_storage_bucket_name}"
+            value = "s3://${var.file_storage_bucket_name}"
           }
           env {
             name  = "BUCKET_QUEUE"
