@@ -18,7 +18,7 @@
 1. On a machine with [Docker](https://docker.com) and [Python](https://www.python.org/) installed, run:
     ```
     1 pip install wandb --upgrade
-    2 wandb wandb server start
+    2 wandb server start
     ```
 2. Generate a free license from the [Deployer](https://deploy.wandb.ai/).
 3. Add it to your W&amp;B Server's localhost's settings.
