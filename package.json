@@ -1,6 +1,6 @@
 {
   "name": "local",
-  "version": "0.24.0",
+  "version": "0.24.1",
   "description": "W&B Local is the self hosted version of Weights & Biases",
   "repository": "git@github.com:wandb/local.git",
   "author": "Chris Van Pelt <vanpelt@wandb.com>",
