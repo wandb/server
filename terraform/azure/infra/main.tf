@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=2.63.0"
+      version = ">=2.85.0"
     }
   }
 }
@@ -246,6 +246,7 @@ resource "azurerm_application_gateway" "wandb" {
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
+    priority                   = 10
   }
 
   firewall_policy_id = var.use_web_application_firewall ? azurerm_web_application_firewall_policy.wandb.id : null
