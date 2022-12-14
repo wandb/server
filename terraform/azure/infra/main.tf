@@ -169,7 +169,7 @@ resource "azurerm_network_security_group" "wandb" {
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "TCP"
+    protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "65200-65535"
     source_address_prefix      = "GatewayManager"
@@ -229,7 +229,7 @@ resource "azurerm_application_gateway" "wandb" {
     name                  = local.http_setting_name
     cookie_based_affinity = "Disabled"
     port                  = 80
-    protocol              = "http"
+    protocol              = "Http"
     request_timeout       = 60
   }
 
@@ -237,7 +237,7 @@ resource "azurerm_application_gateway" "wandb" {
     name                           = local.listener_name
     frontend_ip_configuration_name = local.frontend_ip_configuration_name
     frontend_port_name             = local.frontend_port_name
-    protocol                       = "http"
+    protocol                       = "Http"
   }
 
   request_routing_rule {
@@ -317,12 +317,12 @@ resource "azurerm_kubernetes_cluster" "wandb" {
   dns_prefix          = var.global_environment_name
 
   default_node_pool {
-    name               = "default"
-    node_count         = 2
-    vm_size            = "Standard_D4s_v3"
-    vnet_subnet_id     = azurerm_subnet.backend.id
-    type               = "VirtualMachineScaleSets"
-    availability_zones = ["1", "2"]
+    name           = "default"
+    node_count     = 2
+    vm_size        = "Standard_D4s_v3"
+    vnet_subnet_id = azurerm_subnet.backend.id
+    type           = "VirtualMachineScaleSets"
+    # availability_zones = ["1", "2"]
   }
 
   network_profile {
@@ -340,16 +340,21 @@ resource "azurerm_kubernetes_cluster" "wandb" {
   }
 
   # TODO: move outside of addon_profile to avoid breaking in 3.0
-  addon_profile {
-    http_application_routing {
-      enabled = false
-    }
-    ingress_application_gateway {
-      enabled    = true
-      gateway_id = azurerm_application_gateway.wandb.id
-    }
+  # addon_profile {
+  #   http_application_routing {
+  #     enabled = false
+  #   }
+  #   ingress_application_gateway {
+  #     enabled    = true
+  #     gateway_id = azurerm_application_gateway.wandb.id
+  #   }
+  # }
+  ingress_application_gateway {
+    gateway_id = azurerm_application_gateway.wandb.id
   }
-  automatic_channel_upgrade = "stable"
+
+  http_application_routing_enabled = false
+  automatic_channel_upgrade        = "stable"
 
   private_cluster_enabled = var.kubernetes_api_is_private
 
