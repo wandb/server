@@ -107,6 +107,8 @@ services:
       WATCHTOWER_SCHEDULE: 0 0 0 * * 0 # Every sunday
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_DEBUG: "true"
+      WATCHTOWER_INCLUDE_RESTARTING: "true"
+      WATCHTOWER_INCLUDE_STOPPED: "true"
     volumes: 
       - /var/run/docker.sock:/var/run/docker.sock
     command: wandb_server
