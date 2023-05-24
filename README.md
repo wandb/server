@@ -2,8 +2,8 @@
   <img src=".github/wb-logo.png" width="50" alt="Weights & Biases"/>
 </p>
 
-<h1 align="center">Weights & Biases Local</h1>
-<h4 align="center"> Server is the self hosted version of Weights &amp; Biases.</h4>
+<h1 align="center">Weights & Biases Server</h1>
+<h4 align="center">Server is the self hosted version of Weights &amp; Biases.</h4>
 
 <p align="center">
   <a href="#Quickstart">Quickstart</a> •
