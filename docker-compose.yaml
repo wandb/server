@@ -1,0 +1,124 @@
+version: '3'
+
+services:
+  db:
+    container_name: wandb_db
+    image: mysql:8.0
+    restart: always
+    networks:
+      - wandb
+    environment:
+      MYSQL_DATABASE: 'wandb'
+      MYSQL_USER: 'wandb'
+      MYSQL_PASSWORD: 'wandb'
+      MYSQL_ROOT_PASSWORD: 'wandb'
+    ports:
+      - 3306:3306
+    volumes: 
+      - db:/var/lib/mysql
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        interval: 5s
+        retries: 10
+
+  redis:
+    container_name: wandb_redis
+    image: redis:6
+    restart: always
+    networks:
+      - wandb
+    ports:
+      - 6379:6379
+    volumes: 
+      - redis:/data
+    healthcheck:
+      interval: 5s
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+
+  minio:
+    container_name: wandb_storage
+    image: minio/minio
+    restart: always
+    networks:
+      - wandb
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - files:/data
+    environment:
+      MINIO_ROOT_USER: wandb
+      MINIO_ROOT_PASSWORD: wandbadmin
+      MINIO_REGION_NAME: us-east-1
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 20s
+      retries: 5
+  
+  createbucket:
+    container_name: wandb_createbucket
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 wandb wandbadmin;
+      /usr/bin/mc mb myminio/data;
+      /usr/bin/mc policy set public myminio/data;
+      "
+    networks:
+      - wandb
+  
+  wandb:
+    container_name: wandb_server
+    image: wandb/local:latest
+    restart: always
+    networks:
+      - wandb
+    links:
+      - db
+      - redis
+      - minio
+    ports:
+      - 8080:8080
+    environment:
+      MYSQL: mysql://wandb:wandb@db:3306/wandb
+      BUCKET_QUEUE: internal://
+      AWS_REGION: us-east-1
+      BUCKET: s3://wandb:wandbadmin@minio:9000/data
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+  watchtower:
+    container_name: wandb_autoupgrade
+    image: containrrr/watchtower
+    restart: always
+    environment:
+      WATCHTOWER_SCHEDULE: 0 0 0 * * 0 # Every sunday
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_DEBUG: "true"
+    volumes: 
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: wandb_server
+
+volumes:
+  db:
+    driver: local
+  redis:
+    driver: local
+  files:
+    driver: local
+
+networks:
+  wandb:
+    name: wa
