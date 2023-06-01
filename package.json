@@ -3,11 +3,11 @@
   "version": "0.34.0",
   "description": "W&B Local is the self hosted version of Weights & Biases",
   "repository": "git@github.com:wandb/local.git",
-  "author": "Chris Van Pelt <vanpelt@wandb.com>",
+  "author": "Weights & Biases <support@wandb.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build:installer": "ts-node installer/build.sh"
+    "build:installer": "ts-node installer/build.ts"
   },
   "dependencies": {
     "typescript": "^5.0.4"
