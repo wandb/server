@@ -33,6 +33,9 @@ function package_download() {
         bail "package_download called with no package name"
     fi
 
+    mkdir -p assets
+    touch assets/Manifest
+
     local etag="$(grep -F "${package}" assets/Manifest | awk 'NR == 1 {print $2}')"
     local checksum="$(grep -F "${package}" assets/Manifest | awk 'NR == 1 {print $3}')"
 
