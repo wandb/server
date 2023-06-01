@@ -6,33 +6,16 @@
   "author": "Chris Van Pelt <vanpelt@wandb.com>",
   "license": "MIT",
   "private": true,
-  "devDependencies": {
-    "@octokit/rest": "^18.0.6",
-    "@types/lodash": "^4.14.171",
-    "auto-release-notes": "git://github.com/wandb/auto-release-notes.git#v0.2.0",
-    "lodash": "^4.17.21",
-    "release-it": "^14.1.0",
-    "typescript": "^4.3.5"
+  "scripts": {
+    "build:installer": "ts-node installer/build.sh"
   },
-  "release-it": {
-    "git": {
-      "requireCleanWorkingDir": false
-    },
-    "github": {
-      "release": true,
-      "releaseNotes": "cat ./staging/RELEASE.md"
-    },
-    "npm": {
-      "publish": false,
-      "release": false
-    },
-    "hooks": {
-      "before:init": "rm -rf ./staging/RELEASE.md"
-    },
-    "plugins": {
-      "./js/plugins/release.js": {
-        "legacy": false
-      }
-    }
+  "dependencies": {
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "eslint": "^8.41.0",
+    "prettier": "^2.8.8",
+    "ts-node": "^10.9.1"
   }
 }
