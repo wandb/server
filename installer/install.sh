@@ -67,6 +67,7 @@ function main() {
     discover
     setup  
     init
+    addons
     
     printf "\n"
 }
