@@ -51,8 +51,6 @@ function setup() {
 function init() {
     API_SERVICE_ADDRESS="$PRIVATE_ADDRESS:6443"
 
-    mkdir -p "$KUBEADM_CONF_DIR"
-
     set +o pipefail
 
     cmd_retry 3 kubeadm init \
