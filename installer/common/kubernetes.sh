@@ -156,7 +156,7 @@ ip_vs_rr
 ip_vs_wrr
 ip_vs_sh
 
-nf_conntrack_ipv4
+nf_conntrack
 EOF
     modprobe overlay
     modprobe br_netfilter
@@ -169,7 +169,7 @@ EOF
     modprobe ip_vs_wrr
     modprobe ip_vs_sh
 
-    modprobe nf_conntrack_ipv4
+    modprobe nf_conntrack
 }
 
 function kubernetes_load_sysctl() {
