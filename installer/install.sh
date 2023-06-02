@@ -33,8 +33,6 @@ export DEPENDENCIES=$DIR/packages/deps
 export HOSTNAME="$(hostname | tr '[:upper:]' '[:lower:]')"
 
 function setup() {
-    discover
-
     require_root_user
     path_add "/usr/local/bin"
 
@@ -70,7 +68,8 @@ function init() {
 
 function main() {
     log_step "Running install with the argument(s): $*"
-
+    
+    discover
     # setup    
     init
     

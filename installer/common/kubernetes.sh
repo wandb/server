@@ -226,7 +226,7 @@ function kubernetes_api_address() {
 }
 
 function kubeadm_api_is_healthy() {
-    addr=$PRIVATE_ADDRESS:6443
+    addr=$PRIVATE_IP:6443
     echo "https://$addr/healthz"
     curl -k "https://$addr/healthz"
 }
