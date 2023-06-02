@@ -148,7 +148,7 @@ EOF
 
 
 function kubernetes_load_modules() {
-    cat <<EOF | /etc/modules-load.d/k8s.conf
+    cat <<EOF > /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 
@@ -177,7 +177,7 @@ EOF
 }
 
 function kubernetes_load_sysctl() {
-        cat <<EOF | /etc/sysctl.d/k8s-ipv4.conf
+        cat <<EOF > /etc/sysctl.d/k8s-ipv4.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 
