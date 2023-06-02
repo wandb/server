@@ -53,9 +53,9 @@ function init() {
 
     set +o pipefail
 
-    cmd_retry 3 kubeadm init \
-        --ignore-preflight-errors="all" \
-        | tee /tmp/kubeadm-init
+    # cmd_retry 3 kubeadm init \
+    #     --ignore-preflight-errors="all" \
+    #     | tee /tmp/kubeadm-init
     
     log_step "Waiting for kubernetes api health to report ok"
     if ! spinner_until 120 kubeadm_api_is_healthy; then
@@ -71,7 +71,7 @@ function init() {
 function main() {
     log_step "Running install with the argument(s): $*"
 
-    setup    
+    # setup    
     init
     
     printf "\n"
