@@ -20,7 +20,7 @@ function kubernetes_packages_download() {
     fi
 }
 
-function kubernetes_install_packages() {    
+function kubernetes_install_packages() {
     kubernetes_packages_download
 
     log_step "Installing packages"
@@ -148,7 +148,7 @@ EOF
 
 
 function kubernetes_load_modules() {
-    cat <<EOF | tee /etc/modules-load.d/k8s.conf
+    cat <<EOF | /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
 
@@ -177,7 +177,7 @@ EOF
 }
 
 function kubernetes_load_sysctl() {
-        cat <<EOF | tee /etc/sysctl.d/k8s-ipv4.conf
+        cat <<EOF | /etc/sysctl.d/k8s-ipv4.conf
 net.bridge.bridge-nf-call-iptables  = 1
 net.ipv4.ip_forward                 = 1
 
@@ -194,16 +194,9 @@ EOF
     if [ "$(cat /proc/sys/net/ipv6/ip_forward)" = "0" ]; then
         bail "Failed to enable IP6 forwarding."
     fi
-
-    modprobe ip_vs
-    modprobe ip_vs_rr
-    modprobe ip_vs_wrr
-    modprobe ip_vs_sh
 }
 
 function kubernetes_has_packages() {
-    local k8sVersion=$1
-
     if ! command_exists kubelet; then
         printf "kubelet command missing - will install host components\n"
         return 1
