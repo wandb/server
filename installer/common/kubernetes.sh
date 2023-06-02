@@ -227,5 +227,5 @@ function kubernetes_api_address() {
 
 function kubeadm_api_is_healthy() {
     addr=$PRIVATE_ADDRESS:6443
-    curl --globoff --noproxy "*" --fail --silent --insecure "https://$($addr)/healthz" >/dev/null
+    curl -k "https://$addr/healthz"
 }

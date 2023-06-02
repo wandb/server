@@ -32,9 +32,6 @@ export PACKAGES=$DIR/packages/kubernetes/$KUBERNETES_VERSION
 export DEPENDENCIES=$DIR/packages/deps
 export HOSTNAME="$(hostname | tr '[:upper:]' '[:lower:]')"
 
-export KUBEADM_CONF_DIR=/opt/kubeadm
-export KUBEADM_CONF_FILE="$KUBEADM_CONF_DIR/kubeadm.conf"
-
 function setup() {
     discover
 
@@ -61,12 +58,14 @@ function init() {
     cmd_retry 3 kubeadm init \
         --ignore-preflight-errors="all" \
         | tee /tmp/kubeadm-init
-
+    
     log_step "Waiting for kubernetes api health to report ok"
     if ! spinner_until 120 kubeadm_api_is_healthy; then
         bail "Kubernetes API failed to report healthy"
     fi
-
+    
+    export KUBECONFIG=/etc/kubernetes/admin.conf
+    
     kubectl cluster-info
     log_success "Cluster initialized"
 }
