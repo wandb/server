@@ -3,8 +3,9 @@ CNI_BIN=/opt/cni/bin
 function kubernetes_install_packages() {    
     mkdir -p $PACKAGES
     if [ -z "$AIRGAP" ] || [ "$AIRGAP" != "1" ];  then
-        log_step "Downloading kubelet, kubectl, kubeadm and cni packages"
+        log_step "Downloading packages"
         pushd $PACKAGES > /dev/null 2>&1
+            package_download "runc" "https://github.com/opencontainers/runc/releases/download/v$RUNC_VERSION/runc.$ARCH"
             package_download "cni-plugins.tgz" "https://github.com/containernetworking/plugins/releases/download/v$CNI_PLUGINS_VERSION/cni-plugins-linux-$ARCH-v$CNI_PLUGINS_VERSION.tgz"
             package_download "kubeadm" "https://dl.k8s.io/release/v$KUBERNETES_VERSION/bin/linux/$ARCH/kubeadm"
             package_download "kubelet" "https://dl.k8s.io/release/v$KUBERNETES_VERSION/bin/linux/$ARCH/kubelet"
@@ -14,14 +15,16 @@ function kubernetes_install_packages() {
         popd > /dev/null 2>&1
     fi
 
-    # log_step "Install kubelet, kubectl and cni host packages"
-    # if kubernetes_host_commands_ok "$k8sVersion"; then
-    #     log_success "Kubernetes host packages already installed"
-    #     return
-    # fi
-
     log_step "Installing packages"
     pushd $PACKAGES > /dev/null 2>&1
+        printf "Installing containerd\n"
+        tar -C /usr/local -xzf "$(package_filepath "containerd.tar.gz")"
+        chmod a+rx /usr/bin/kubectl
+        kubernetes_configure_containerd_systemd
+
+        printf "Installing runc\n"
+        install -m 755 $(package_filepath "runc") /usr/local/sbin/runc
+
         log_step "Installing cni plugins\n"
         mkdir -p $CNI_BIN
         tar -C $CNI_BIN -xzf "$(package_filepath "cni-plugins.tgz")"
@@ -35,20 +38,60 @@ function kubernetes_install_packages() {
         chmod a+rx /usr/bin/kubeadm
 
         printf "Installing kubectl\n"
-        # cp -f "$(package_filepath "kubectl")" /usr/bin/
-        # chmod a+rx /usr/bin/kubectl
+        cp -f "$(package_filepath "kubectl")" /usr/bin/
+        chmod a+rx /usr/bin/kubectl
+    
     
         printf "Installing kubelet\n"
-        kubernetes_configure_kubelet_systemd
         cp -f "$(package_filepath "kubelet")" /usr/bin/
         chmod a+rx /usr/bin/kubelet
+        kubernetes_configure_kubelet_systemd
     popd > /dev/null 2>&1
 
-    printf "Restarting Kubelet"
+    printf "Loading Kubelet\n"
     systemctl daemon-reload
     systemctl enable kubelet && systemctl restart kubelet
 
     log_success "Kubernetes packages installed"
+}
+
+function kubernetes_configure_containerd_systemd() {
+    mkdir -p /usr/local/lib/systemd/system
+    cat > "containerd.service" <<EOF
+[Unit]
+Description=containerd container runtime
+Documentation=https://containerd.io
+After=network.target local-fs.target
+
+[Service]
+#uncomment to enable the experimental sbservice (sandboxed) version of containerd/cri integration
+#Environment="ENABLE_CRI_SANDBOXES=sandboxed"
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart=/usr/local/bin/containerd
+
+Type=notify
+Delegate=yes
+KillMode=process
+Restart=always
+RestartSec=5
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNPROC=infinity
+LimitCORE=infinity
+LimitNOFILE=infinity
+# Comment TasksMax if your systemd version does not supports it.
+# Only systemd 226 and above support this version.
+TasksMax=infinity
+OOMScoreAdjust=-999
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    cp -f "containerd.service" "/etc/systemd/system/containerd.service"
+    chmod 600 /etc/systemd/system/containerd.service
+
+    systemctl daemon-reload
+    systemctl enable containerd && systemctl restart containerd
 }
 
 function kubernetes_configure_kubelet_systemd() {
@@ -89,10 +132,11 @@ ExecStart=
 ExecStart=/usr/bin/kubelet \$KUBELET_KUBECONFIG_ARGS \$KUBELET_CONFIG_ARGS \$KUBELET_KUBEADM_ARGS $KUBELET_EXTRA_ARGS
 EOF
 
-    mkdir -p /etc/systemd/system/kubelet.service.d
     cp -f "10-kubeadm.conf" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
     chmod 600 /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
 
+    systemctl daemon-reload
+    systemctl enable kubelet && systemctl restart kubelet
 }
 
 function kubernetes_has_packages() {
@@ -108,10 +152,6 @@ function kubernetes_has_packages() {
     fi
     if ! command_exists kubectl; then
         printf "kubectl command missing - will install host components\n"
-        return 1
-    fi
-    if ! ( PATH=$PATH:/usr/local/bin; command_exists kustomize ); then
-        printf "kustomize command missing - will install host components\n"
         return 1
     fi
     if ! command_exists crictl; then
