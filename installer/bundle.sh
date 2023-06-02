@@ -17,7 +17,6 @@ export RUNC_VERSION="1.1.7"
 export OPENSSL_VERSION="3.1.1"
 # </Config>
 
-
 # <ImportInline>
 . $DIR/installer/common/kubernetes.sh
 . $DIR/installer/common/logging.sh
@@ -31,30 +30,13 @@ export OPENSSL_VERSION="3.1.1"
 export PACKAGES=$DIR/packages/kubernetes/$KUBERNETES_VERSION
 export DEPENDENCIES=$DIR/packages/deps
 
-function main() {
-    log_step "Running install with the argument(s): $*"
+log_step "Generating installer"
+pnpm build:installer:airgap
 
-    discover
+kubernetes_packages_download
+dependencies_download
 
-    require_root_user
-    path_add "/usr/local/bin"
+log_step "Creating tar"
+tar -czvf bundle-$ARCH-$KUBERNETES_VERSION.tar.gz $DIR/install.sh $DIR/packages
 
-    if [ "$AIRGAP" = "1" ]; then
-        log_step "Running in airgapped enviroment."
-    fi
-
-    kubernetes_load_modules
-    kubernetes_load_sysctl
-    must_swap_off
-    kubernetes_install_packages
-    
-    kubernetes_init
-    
-    printf "\n"
-}
-
-LOGS_DIR="$DIR/logs"
-mkdir -p $LOGS_DIR
-LOGFILE="$LOGS_DIR/install-$(date +"%Y-%m-%dT%H-%M-%S").log"
-
-main "$@" 2>&1 | tee $LOGFILE
+printf "\n"

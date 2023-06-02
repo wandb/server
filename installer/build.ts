@@ -5,6 +5,8 @@ import { spawnSync } from 'child_process'
 const INSTALLER_SCRIPT = `${__dirname}/install.sh`
 const INSTALLER_SCRIPT_VARIABLE_DIR = 'DIR'
 
+const generateAirgapScript = Boolean(process.env.AIRGAP)
+
 function readBashVariables(filePath: string) {
   const content = fs.readFileSync(filePath, { encoding: 'utf-8' })
   const lines = content.split('\n')
@@ -50,6 +52,12 @@ function main() {
   let content = fs
     .readFileSync(INSTALLER_SCRIPT, { encoding: 'utf-8' })
     .split('\n')
+
+  if (generateAirgapScript)
+    content = content.map((d) =>
+      d.startsWith('export AIRGAP=') ? 'export AIRGAP=1' : d,
+    )
+
   for (const importLine of getImportLines(INSTALLER_SCRIPT)) {
     const importScriptPath = importLine.replace(
       `. $${INSTALLER_SCRIPT_VARIABLE_DIR}`,

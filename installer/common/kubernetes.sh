@@ -4,7 +4,7 @@ function kubernetes_host() {
     kubernetes_load_modules
 }
 
-function kubernetes_install_packages() {    
+function kubernetes_packages_download() {
     mkdir -p $PACKAGES
     if [ -z "$AIRGAP" ] || [ "$AIRGAP" != "1" ];  then
         log_step "Downloading packages"
@@ -18,6 +18,10 @@ function kubernetes_install_packages() {
             package_download "crictl.tar.gz" "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-$ARCH.tar.gz"
         popd > /dev/null 2>&1
     fi
+}
+
+function kubernetes_install_packages() {    
+    kubernetes_packages_download
 
     log_step "Installing packages"
     pushd $PACKAGES > /dev/null 2>&1

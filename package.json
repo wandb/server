@@ -7,7 +7,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build:installer": "ts-node installer/build.ts"
+    "build:installer": "ts-node installer/build.ts",
+    "build:installer:airgap": "AIRGAP=true ts-node installer/build.ts",
+    "bundle:installer": "bash installer/bundle.sh"
   },
   "dependencies": {
     "typescript": "^5.0.4"
