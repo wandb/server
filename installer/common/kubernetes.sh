@@ -106,13 +106,13 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-ExecStart=/kubelet
+ExecStart=/usr/bin/kubelet
 Restart=always
 StartLimitInterval=0
 RestartSec=10
 
 [Install]
-WantedBy=multi-user.target"
+WantedBy=multi-user.target
 EOF
     cp -f "kubelet.service" "/etc/systemd/system/kubelet.service"
     chmod 600 /etc/systemd/system/kubelet.service
