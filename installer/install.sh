@@ -5,8 +5,10 @@ set -e
 DIR=.
 
 # <ImportInline>
-. $DIR/installer/config.sh
+. $DIR/installer/configs/1.27.2.sh
+. $DIR/installer/configs/base.sh
 . $DIR/installer/common/kubernetes.sh
+. $DIR/installer/common/addons.sh
 . $DIR/installer/common/kubeadm.sh
 . $DIR/installer/common/logging.sh
 . $DIR/installer/common/discover.sh
@@ -51,6 +53,12 @@ function init() {
     
     kubectl cluster-info
     log_success "Cluster initialized"
+}
+
+# at this point kubectl should be configured.
+function addons() {
+    addons_download
+    addons_install
 }
 
 function main() {

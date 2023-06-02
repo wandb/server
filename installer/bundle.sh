@@ -5,8 +5,10 @@ set -e
 DIR=.
 
 # <ImportInline>
-. $DIR/installer/config.sh
+. $DIR/installer/configs/1.27.2.sh
+. $DIR/installer/configs/base.sh
 . $DIR/installer/common/kubernetes.sh
+. $DIR/installer/common/addons.sh
 . $DIR/installer/common/kubeadm.sh
 . $DIR/installer/common/logging.sh
 . $DIR/installer/common/discover.sh
@@ -23,8 +25,9 @@ pnpm build:installer:airgap
 kubernetes_packages_download
 dependencies_download
 images_download
+addons_download
 
 log_step "Creating tar"
-tar -czvf bundle-$ARCH-$KUBERNETES_VERSION.tar.gz $DIR/install.sh $DIR/packages
+tar -czvf installer-$ARCH-$KUBERNETES_VERSION.tar.gz $DIR/install.sh $DIR/packages
 
 printf "\n"

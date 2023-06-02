@@ -33,6 +33,10 @@ function images_download() {
             image_download "kube-scheduler" $IMAGE_KUBE_SCHEDULER
             image_download "kube-proxy" $IMAGE_KUBE_PROXY
             image_download "pause" $IMAGE_PAUSE
+
+            # ingress
+            image_download "contour" $IMAGE_CONTOUR
+            image_download "envoy" $IMAGE_ENVOY
         popd > /dev/null 2>&1
     fi
 }

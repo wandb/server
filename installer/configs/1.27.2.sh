@@ -16,8 +16,6 @@ export IMAGE_KUBE_CONTROLLER=registry.k8s.io/kube-controller-manager:v$KUBERNETE
 export IMAGE_KUBE_PROXY=registry.k8s.io/kube-proxy:v$KUBERNETES_VERSION
 export IMAGE_KUBE_SCHEDULER=registry.k8s.io/kube-scheduler:v$KUBERNETES_VERSION
 export IMAGE_PAUSE=registry.k8s.io/pause:3.9
-
-export PACKAGES=$DIR/packages/kubernetes/$KUBERNETES_VERSION
-export IMAGES=$DIR/packages/kubernetes/$KUBERNETES_VERSION/images
-export DEPENDENCIES=$DIR/packages/deps
-export HOSTNAME="$(hostname | tr '[:upper:]' '[:lower:]')"
+export IMAGE_CONTOUR=ghcr.io/projectcontour/contour:v1.25.0
+export IMAGE_ENVOY=docker.io/envoyproxy/envoy:v1.26.1
+export IMAGE_ENVOY=docker.io/envoyproxy/envoy:v1.26.1
