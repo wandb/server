@@ -30,10 +30,12 @@ export OPENSSL_VERSION="3.1.1"
 
 export PACKAGES=$DIR/packages/kubernetes/$KUBERNETES_VERSION
 export DEPENDENCIES=$DIR/packages/deps
+export HOSTNAME="$(hostname | tr '[:upper:]' '[:lower:]')"
 
-function main() {
-    log_step "Running install with the argument(s): $*"
+export KUBEADM_CONF_DIR=/opt/kubeadm
+export KUBEADM_CONF_FILE="$KUBEADM_CONF_DIR/kubeadm.conf"
 
+function setup() {
     discover
 
     require_root_user
@@ -47,8 +49,33 @@ function main() {
     kubernetes_load_sysctl
     must_swap_off
     kubernetes_install_packages
-    
-    kubernetes_init
+}
+
+function init() {
+    API_SERVICE_ADDRESS="$PRIVATE_ADDRESS:6443"
+
+    mkdir -p "$KUBEADM_CONF_DIR"
+
+    cmd_retry 3 kubeadm init \
+        --ignore-preflight-errors="all" \
+        --config $KUBEADM_CONF_FILE \
+        | tee /tmp/kubeadm-init
+    set +o pipefail
+
+    log_step "Waiting for kubernetes api health to report ok"
+    if ! spinner_until 120 kubeadm_api_is_healthy; then
+        bail "Kubernetes API failed to report healthy"
+    fi
+
+    kubectl cluster-info
+    log_success "Cluster initialized"
+}
+
+function main() {
+    log_step "Running install with the argument(s): $*"
+
+    setup    
+    init
     
     printf "\n"
 }

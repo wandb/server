@@ -14,7 +14,7 @@ function log() {
 }
 
 function log_step() {
-    printf "${BLUE}⚙  $1${NC}\n" 1>&2
+    printf "\n${BLUE}⚙  $1${NC}\n" 1>&2
 }
 
 function log_substep() {

@@ -16,6 +16,7 @@ function kubernetes_packages_download() {
             package_download "kubectl" "https://dl.k8s.io/release/v$KUBERNETES_VERSION/bin/linux/$ARCH/kubectl"
             package_download "containerd.tar.gz" "https://github.com/containerd/containerd/releases/download/v$CONTAINERD_VERSION/containerd-$CONTAINERD_VERSION-linux-$ARCH.tar.gz"
             package_download "crictl.tar.gz" "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-$ARCH.tar.gz"
+            package_download "conntrack-tools.tar.bz2" "https://www.netfilter.org/projects/conntrack-tools/files/conntrack-tools-$CONNTRACK_VERSION.tar.bz2"
         popd > /dev/null 2>&1
     fi
 }
@@ -25,31 +26,31 @@ function kubernetes_install_packages() {
 
     log_step "Installing packages"
     pushd $PACKAGES > /dev/null 2>&1
-        printf "Installing containerd\n"
+        log_substep "Installing containerd\n"
         tar -C /usr/local -xzf "$(package_filepath "containerd.tar.gz")"
         kubernetes_configure_containerd_systemd
 
         printf "Installing runc\n"
         install -m 755 $(package_filepath "runc") /usr/local/sbin/runc
 
-        log_step "Installing cni plugins\n"
+        log_substep "Installing cni plugins\n"
         mkdir -p $CNI_BIN
         tar -C $CNI_BIN -xzf "$(package_filepath "cni-plugins.tgz")"
 
-        printf "Installing crictl\n"
+        log_substep "Installing crictl\n"
         tar -C /usr/bin -xzf $(package_filepath "crictl.tar.gz")
         chmod a+rx /usr/bin/crictl
 
-        printf "Installing kubeadm\n"
+        log_substep "Installing kubeadm\n"
         cp -f "$(package_filepath "kubeadm")" /usr/bin/
         chmod a+rx /usr/bin/kubeadm
 
-        printf "Installing kubectl\n"
+        log_substep "Installing kubectl\n"
         cp -f "$(package_filepath "kubectl")" /usr/bin/
         chmod a+rx /usr/bin/kubectl
     
     
-        printf "Installing kubelet\n"
+        log_substep "Installing kubelet\n"
         cp -f "$(package_filepath "kubelet")" /usr/bin/
         chmod a+rx /usr/bin/kubelet
         kubernetes_configure_kubelet_systemd
@@ -215,12 +216,17 @@ function kubernetes_has_packages() {
     fi
 }
 
-function kubernetes_init() {
-    log_step "Initialize Kubernetes"
+function kubernetes_api_address() {
+    local addr="$LOAD_BALANCER_ADDRESS"
+    local port="$LOAD_BALANCER_PORT"
 
-    local addr="$PRIVATE_ADDRESS"
-    local port="6443"
-    API_SERVICE_ADDRESS="$PRIVATE_ADDRESS:6443"
+    if [ -z "$addr" ]; then
+        addr="$PRIVATE_ADDRESS"
+        port="6443"
+    fi
+}
 
-    log_success "Kubernetes Master Initialized"
+function kubeadm_api_is_healthy() {
+    addr=$PRIVATE_ADDRESS:6443
+    curl --globoff --noproxy "*" --fail --silent --insecure "https://$($addr)/healthz" >/dev/null
 }

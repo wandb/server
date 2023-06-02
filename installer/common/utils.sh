@@ -37,7 +37,6 @@ function rm_file() {
     fi
 }
 
-
 function must_swap_off() {
     if swap_is_on || swap_is_enabled; then
         printf "\n${YELLOW}This application is incompatible with memory swapping enabled. Disable swap to continue?${NC} "
@@ -92,4 +91,52 @@ function swap_service_disable() {
 
 function swap_azure_linux_agent_enabled() {
     cat /etc/waagent.conf 2>/dev/null | grep -q 'ResourceDisk.EnableSwap=y'
+}
+
+# retry a command if it fails up to $1 number of times
+# Usage: cmd_retry 3 curl --globoff --noproxy "*" --fail --silent --insecure https://10.128.0.25:6443/healthz
+function cmd_retry() {
+    local retries=$1
+    shift
+
+    local count=0
+    until "$@"; do
+        exit=$?
+        wait=$((2 ** $count))
+        count=$(($count + 1))
+        if [ $count -lt $retries ]; then
+            echo "Retry $count/$retries exited $exit, retrying in $wait seconds..."
+            sleep $wait
+        else
+            echo "Retry $count/$retries exited $exit, no more retries left."
+            return $exit
+        fi
+    done
+    return 0
+}
+
+function spinner_until() {
+    local timeoutSeconds="$1"
+    local cmd="$2"
+    local args=${@:3}
+
+    if [ -z "$timeoutSeconds" ]; then
+        timeoutSeconds=-1
+    fi
+
+    local delay=1
+    local elapsed=0
+    local spinstr='|/-\'
+
+    while ! $cmd $args; do
+        elapsed=$((elapsed + delay))
+        if [ "$timeoutSeconds" -ge 0 ] && [ "$elapsed" -gt "$timeoutSeconds" ]; then
+            return 1
+        fi
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
+    done
 }
