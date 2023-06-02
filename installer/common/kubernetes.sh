@@ -16,7 +16,6 @@ function kubernetes_packages_download() {
             package_download "kubectl" "https://dl.k8s.io/release/v$KUBERNETES_VERSION/bin/linux/$ARCH/kubectl"
             package_download "containerd.tar.gz" "https://github.com/containerd/containerd/releases/download/v$CONTAINERD_VERSION/containerd-$CONTAINERD_VERSION-linux-$ARCH.tar.gz"
             package_download "crictl.tar.gz" "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-$ARCH.tar.gz"
-            package_download "conntrack-tools.tar.bz2" "https://www.netfilter.org/projects/conntrack-tools/files/conntrack-tools-$CONNTRACK_VERSION.tar.bz2"
         popd > /dev/null 2>&1
     fi
 }
