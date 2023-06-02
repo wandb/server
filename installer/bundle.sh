@@ -13,13 +13,13 @@ export CRICTL_VERSION="1.27.0"
 export CNI_PLUGINS_VERSION="1.3.0"
 export CONTAINERD_VERSION="1.7.1"
 export RUNC_VERSION="1.1.7"
-export CONNTRACK_VERSION=""
 
 export OPENSSL_VERSION="3.1.1"
 # </Config>
 
 # <ImportInline>
 . $DIR/installer/common/kubernetes.sh
+. $DIR/installer/common/kubeadm.sh
 . $DIR/installer/common/logging.sh
 . $DIR/installer/common/discover.sh
 . $DIR/installer/common/packages.sh

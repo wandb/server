@@ -25,31 +25,31 @@ function kubernetes_install_packages() {
 
     log_step "Installing packages"
     pushd $PACKAGES > /dev/null 2>&1
-        log_substep "Installing containerd\n"
+        printf "Installing containerd\n"
         tar -C /usr/local -xzf "$(package_filepath "containerd.tar.gz")"
         kubernetes_configure_containerd_systemd
 
         printf "Installing runc\n"
         install -m 755 $(package_filepath "runc") /usr/local/sbin/runc
 
-        log_substep "Installing cni plugins\n"
+        printf "Installing cni plugins\n"
         mkdir -p $CNI_BIN
         tar -C $CNI_BIN -xzf "$(package_filepath "cni-plugins.tgz")"
 
-        log_substep "Installing crictl\n"
+        printf "Installing crictl\n"
         tar -C /usr/bin -xzf $(package_filepath "crictl.tar.gz")
         chmod a+rx /usr/bin/crictl
 
-        log_substep "Installing kubeadm\n"
+        printf "Installing kubeadm\n"
         cp -f "$(package_filepath "kubeadm")" /usr/bin/
         chmod a+rx /usr/bin/kubeadm
 
-        log_substep "Installing kubectl\n"
+        printf "Installing kubectl\n"
         cp -f "$(package_filepath "kubectl")" /usr/bin/
         chmod a+rx /usr/bin/kubectl
     
     
-        log_substep "Installing kubelet\n"
+        printf "Installing kubelet\n"
         cp -f "$(package_filepath "kubelet")" /usr/bin/
         chmod a+rx /usr/bin/kubelet
         kubernetes_configure_kubelet_systemd
@@ -215,18 +215,3 @@ function kubernetes_has_packages() {
     fi
 }
 
-function kubernetes_api_address() {
-    local addr="$LOAD_BALANCER_ADDRESS"
-    local port="$LOAD_BALANCER_PORT"
-
-    if [ -z "$addr" ]; then
-        addr="$PRIVATE_ADDRESS"
-        port="6443"
-    fi
-}
-
-function kubeadm_api_is_healthy() {
-    addr=$PRIVATE_IP:6443
-    echo "https://$addr/healthz"
-    curl -k "https://$addr/healthz"
-}

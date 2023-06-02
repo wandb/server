@@ -17,9 +17,9 @@ export RUNC_VERSION="1.1.7"
 export OPENSSL_VERSION="3.1.1"
 # </Config>
 
-
 # <ImportInline>
 . $DIR/installer/common/kubernetes.sh
+. $DIR/installer/common/kubeadm.sh
 . $DIR/installer/common/logging.sh
 . $DIR/installer/common/discover.sh
 . $DIR/installer/common/packages.sh
@@ -59,6 +59,8 @@ function init() {
     if ! spinner_until 120 kubeadm_api_is_healthy; then
         bail "Kubernetes API failed to report healthy"
     fi
+
+    printf "\n"
     
     export KUBECONFIG=/etc/kubernetes/admin.conf
     
@@ -70,7 +72,7 @@ function main() {
     log_step "Running install with the argument(s): $*"
     
     discover
-    # setup    
+    setup  
     init
     
     printf "\n"
