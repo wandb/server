@@ -30,7 +30,7 @@ function images_download() {
             image_download "kube-controller-manager" $IMAGE_KUBE_CONTROLLER
             image_download "kube-scheduler" $IMAGE_KUBE_SCHEDULER
             image_download "kube-proxy" $IMAGE_KUBE_PROXY
-            image_download "pause.tar.gz" $IMAGE_PAUSE
+            image_download "pause" $IMAGE_PAUSE
         popd > /dev/null 2>&1
     fi
 }
