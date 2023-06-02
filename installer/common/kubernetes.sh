@@ -56,7 +56,8 @@ function kubernetes_configure_kubelet_systemd() {
     
     mkdir -p /etc/systemd/system/kubelet.service.d
 
-    cat > "kubelet.service" <<EOF [Unit]
+    cat > "kubelet.service" <<EOF
+[Unit]
 Description=kubelet: The Kubernetes Node Agent
 Documentation=https://kubernetes.io/docs/home/
 Wants=network-online.target
