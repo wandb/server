@@ -142,27 +142,59 @@ EOF
     systemctl enable kubelet && systemctl restart kubelet
 }
 
-# Enable iptables Bridged Traffic
-function kubernetes_enable_ipbridged_traffic() {
+
+function kubernetes_load_modules() {
     cat <<EOF | tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
+
+ip_tables
+ip6_tables
+
+ip_vs
+ip_vs_rr
+ip_vs_wrr
+ip_vs_sh
+
+nf_conntrack_ipv4
 EOF
     modprobe overlay
     modprobe br_netfilter
 
-    # sysctl params required by setup, params persist across reboots
-    cat <<EOF | tee /etc/sysctl.d/k8s.conf
+    modprobe ip_tables
+    modprobe ip6_tables
+
+    modprobe ip_vs
+    modprobe ip_vs_rr
+    modprobe ip_vs_wrr
+    modprobe ip_vs_sh
+
+    modprobe nf_conntrack_ipv4
+}
+
+function kubernetes_load_sysctl() {
+        cat <<EOF | tee /etc/sysctl.d/k8s-ipv4.conf
 net.bridge.bridge-nf-call-iptables  = 1
-net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
+
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv6.ip_forward                 = 1
 EOF
 
     sysctl --system
 
     if [ "$(cat /proc/sys/net/ipv4/ip_forward)" = "0" ]; then
-        bail "Failed to enable IP forwarding."
+        bail "Failed to enable IP4 forwarding."
     fi
+
+    if [ "$(cat /proc/sys/net/ipv6/ip_forward)" = "0" ]; then
+        bail "Failed to enable IP6 forwarding."
+    fi
+
+    modprobe ip_vs
+    modprobe ip_vs_rr
+    modprobe ip_vs_wrr
+    modprobe ip_vs_sh
 }
 
 function kubernetes_has_packages() {
@@ -184,4 +216,14 @@ function kubernetes_has_packages() {
         printf "crictl command missing - will install host components\n"
         return 1
     fi
+}
+
+function kubernetes_init() {
+    log_step "Initialize Kubernetes"
+
+    local addr="$PRIVATE_ADDRESS"
+    local port="6443"
+    API_SERVICE_ADDRESS="$PRIVATE_ADDRESS:6443"
+
+    log_success "Kubernetes Master Initialized"
 }
