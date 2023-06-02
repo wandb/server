@@ -36,6 +36,7 @@ function main() {
         log_step "Running in airgapped enviroment."
     fi
 
+    kubernetes_enable_ipbridged_traffic
     must_swap_off
     kubernetes_install_packages
     printf "\n"

@@ -1,5 +1,9 @@
 CNI_BIN=/opt/cni/bin
 
+function kubernetes_host() {
+    kubernetes_load_modules
+}
+
 function kubernetes_install_packages() {    
     mkdir -p $PACKAGES
     if [ -z "$AIRGAP" ] || [ "$AIRGAP" != "1" ];  then
@@ -136,6 +140,29 @@ EOF
 
     systemctl daemon-reload
     systemctl enable kubelet && systemctl restart kubelet
+}
+
+# Enable iptables Bridged Traffic
+function kubernetes_enable_ipbridged_traffic() {
+    cat <<EOF | tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+    modprobe overlay
+    modprobe br_netfilter
+
+    # sysctl params required by setup, params persist across reboots
+    cat <<EOF | tee /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+net.ipv4.ip_forward                 = 1
+EOF
+
+    sysctl --system
+
+    if [ "$(cat /proc/sys/net/ipv4/ip_forward)" = "0" ]; then
+        bail "Failed to enable IP forwarding."
+    fi
 }
 
 function kubernetes_has_packages() {
