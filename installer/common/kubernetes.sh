@@ -19,7 +19,6 @@ function kubernetes_install_packages() {
     pushd $PACKAGES > /dev/null 2>&1
         printf "Installing containerd\n"
         tar -C /usr/local -xzf "$(package_filepath "containerd.tar.gz")"
-        chmod a+rx /usr/bin/kubectl
         kubernetes_configure_containerd_systemd
 
         printf "Installing runc\n"
