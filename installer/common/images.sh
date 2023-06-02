@@ -35,6 +35,6 @@ function images_download() {
     fi
 }
 
-function load_images() {
+function images_load() {
     find "$1" -type f | xargs -I {} bash -c "cat {} | gunzip | ctr -a $(kubeadm_get_containerd_sock) -n=k8s.io images import -"
 }
