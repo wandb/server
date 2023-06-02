@@ -56,11 +56,11 @@ function init() {
 
     mkdir -p "$KUBEADM_CONF_DIR"
 
+    set +o pipefail
+
     cmd_retry 3 kubeadm init \
         --ignore-preflight-errors="all" \
-        --config $KUBEADM_CONF_FILE \
         | tee /tmp/kubeadm-init
-    set +o pipefail
 
     log_step "Waiting for kubernetes api health to report ok"
     if ! spinner_until 120 kubeadm_api_is_healthy; then
