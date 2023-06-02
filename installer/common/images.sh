@@ -12,9 +12,11 @@ function image_download() {
     if command_exists docker; then
         docker pull $url > /dev/null 2>&1
         docker save $url | gzip > $name.tar.gz
-    elif command_exists ctrl; then
-        ctr images pull --plain-http $url
+    elif command_exists ctr; then
+        ctr images pull --plain-http $url > /dev/null 2>&1
         ctr --namespace=default images export --snapshotter=native - $url | gzip > $name.tar.gz
+    else
+        log_warning "No support client installed for pulling images"
     fi
 }
 
