@@ -13,3 +13,4 @@ js/
 assets
 logs
 packages/
+*.gz
