@@ -8,3 +8,7 @@ cert-issuer.yaml
 node_modules
 staging/*
 js/
+
+packages
+.DS_store
+*.log
