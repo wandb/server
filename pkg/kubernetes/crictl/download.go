@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
+	"github.com/pterm/pterm"
 	"github.com/wandb/server/pkg/download"
 	"github.com/wandb/server/pkg/files"
 )
@@ -21,6 +22,7 @@ func DownloadURL(version string) string {
 }
 
 func Download(version string, path string) error {
+	pterm.Info.Printf("Downloading crictl: v%s\n", version)
 	return download.HTTPDownloadAndSave(DownloadURL(version), path)
 }
 

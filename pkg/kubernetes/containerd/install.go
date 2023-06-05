@@ -31,6 +31,7 @@ func DownloadURL(version string) string {
 }
 
 func Download(version string, path string) error {
+	pterm.Info.Printf("Downloading containerd: v%s\n", version)
 	return download.HTTPDownloadAndSave(DownloadURL(version), path)
 }
 
@@ -66,6 +67,8 @@ func setupSystemd() error {
 }
 
 func Install(tarFile string) {
+	pterm.Info.Printf("Installing containerd from %s\n", tarFile)
+
 	err := unzip(tarFile)
 	pterm.Fatal.PrintOnError(err, "failed to unzip containerd tar file")
 	

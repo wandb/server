@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime"
 
+	"github.com/pterm/pterm"
 	"github.com/wandb/server/pkg/download"
 	"github.com/wandb/server/pkg/files"
 )
@@ -26,6 +27,7 @@ func Download(version string, path string) error {
 }
 
 func Install(tarFile string) {
+	pterm.Info.Printf("Installing cni plugins from %s\n", tarFile)
 	os.MkdirAll("/opt/cni/bin", 0755)
 	files.ExtractTarGz(tarFile, "/opt/cni/bin")
 }

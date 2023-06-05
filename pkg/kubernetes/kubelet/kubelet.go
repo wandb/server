@@ -7,6 +7,7 @@ import (
 
 	_ "embed"
 
+	"github.com/pterm/pterm"
 	"github.com/wandb/server/pkg/download"
 	"github.com/wandb/server/pkg/files"
 	"github.com/wandb/server/pkg/linux/systemd"
@@ -21,12 +22,14 @@ func DownloadURL(version string) string {
 }
 
 func Download(version string, path string) error {
+	pterm.Info.Printf("Downloading kubelet: v%s\n", version)
 	return download.HTTPDownloadAndSave(DownloadURL(version), path)
 }
 
 //go:embed 10-kube.conf
 var service string
 func Install(binary string) {
+	pterm.Info.Printf("Installing kubelet from %s\n", binary)
 	files.CopyFile(binary, "/usr/local/kubelet")
 	os.Chmod("/usr/local/kubelete", 0755)
 

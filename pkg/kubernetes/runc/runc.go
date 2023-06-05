@@ -22,11 +22,12 @@ func DownloadURL(version string) string {
 }
 
 func Download(version string, path string) error {
+	pterm.Info.Printf("Downloading runc: v%s\n", version)
 	return download.HTTPDownloadAndSave(DownloadURL(version), path)
 }
 
 func Install(file string) {
-	pterm.Info.Println("Installing runc")
+	pterm.Info.Printf("Installing runc from %s\n", file)
 	files.CopyFile(file, "/usr/local/sbin/runc")
 	os.Chmod("/usr/local/sbin/runc", 0755)
 	pterm.Success.Println("Installed runc")
