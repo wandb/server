@@ -3,10 +3,10 @@ package runc
 import (
 	"fmt"
 	"os"
+	"path"
 	"runtime"
 
-	"github.com/pterm/pterm"
-	"github.com/wandb/server/pkg/download"
+	"github.com/wandb/server/pkg/dependency"
 	"github.com/wandb/server/pkg/files"
 )
 
@@ -21,14 +21,42 @@ func DownloadURL(version string) string {
 	)
 }
 
-func Download(version string, path string) error {
-	pterm.Info.Printf("Downloading runc: v%s\n", version)
-	return download.HTTPDownloadAndSave(DownloadURL(version), path)
+func NewPackage(version string, dest string) dependency.Package {
+	return &RuncPackage{version, dest}
 }
 
-func Install(file string) {
-	pterm.Info.Printf("Installing runc from %s\n", file)
-	files.CopyFile(file, "/usr/local/sbin/runc")
-	os.Chmod("/usr/local/sbin/runc", 0755)
-	pterm.Success.Println("Installed runc")
+type RuncPackage struct {
+	version string
+	dest string
+}
+
+func (p RuncPackage) path() string {
+	pa := path.Join(p.dest, p.Name(), p.version)
+	os.MkdirAll(pa, 0755)
+	return pa
+}
+
+func (p RuncPackage) Version() string {
+	return p.version
+}
+
+func (p RuncPackage) Install() error {
+	binary := path.Join(p.path(), "runc")
+	err := files.CopyFile(binary, "/usr/local/sbin/runc")
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod("/usr/local/sbin/runc", 0755)
+}
+
+func (p RuncPackage) Download() error {
+	return dependency.HTTPDownloadAndSave(
+		DownloadURL(p.version),
+		path.Join(p.path(), "runc"),
+	)
+}
+
+func (p RuncPackage) Name() string {
+	return "runc"
 }

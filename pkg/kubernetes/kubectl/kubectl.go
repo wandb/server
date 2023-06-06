@@ -3,10 +3,10 @@ package kubectl
 import (
 	"fmt"
 	"os"
+	"path"
 	"runtime"
 
-	"github.com/pterm/pterm"
-	"github.com/wandb/server/pkg/download"
+	"github.com/wandb/server/pkg/dependency"
 	"github.com/wandb/server/pkg/files"
 )
 
@@ -18,15 +18,43 @@ func DownloadURL(version string) string {
 	)
 }
 
-func Download(version string, path string) error {
-	pterm.Info.Printf("Downloading kubectl: v%s\n", version)
-	return download.HTTPDownloadAndSave(DownloadURL(version), path)
+func NewPackage(version string, dest string) dependency.Package {
+	return &KubectlPackage{version, dest}
 }
 
-func Install(binary string) {
-	pterm.Info.Printf("Installing kubectl from %s\n", binary)
+type KubectlPackage struct {
+	version string
+	dest string
+}
+
+func (p KubectlPackage) path() string {
+	pa := path.Join(p.dest, p.Name(), p.version)
+	os.MkdirAll(pa, 0755)
+	return pa
+}
+
+
+func (p KubectlPackage) Version() string {
+	return p.version
+}
+
+func (p KubectlPackage) Install() error {
+	binary := path.Join(p.path(), "kubectl")
 	err := files.CopyFile(binary, "/usr/local/bin/kubectl")
-	pterm.Error.PrintOnError(err)
-	err = os.Chmod("/usr/local/bin/kubectl", 0755)
-	pterm.Error.PrintOnError(err)
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod("/usr/local/bin/kubectl", 0755)
+}
+
+func (p KubectlPackage) Download() error {
+	return dependency.HTTPDownloadAndSave(
+		DownloadURL(p.version),
+		path.Join(p.path(), "kubectl"),
+	)
+}
+
+func (p KubectlPackage) Name() string {
+	return "kubectl"
 }

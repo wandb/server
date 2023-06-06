@@ -6,7 +6,9 @@ import (
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"github.com/wandb/server/pkg/cmd/bundle"
-	"github.com/wandb/server/pkg/kubernetes/kubectl"
+	"github.com/wandb/server/pkg/cmd/install"
+	"github.com/wandb/server/pkg/kubernetes/kubeadm"
+	"github.com/wandb/server/pkg/linux/swap"
 )
 
 func RootCmd() *cobra.Command {
@@ -31,9 +33,10 @@ func InstallCommand() *cobra.Command {
 		Use: "install",
 		Short: "Runs the installer",
 		Run: func(cmd *cobra.Command, args []string) {
-			// swap.MustSweepoff()
-			// bundle.DownloadPackages()
-			kubectl.Install("./packages/kubeadm")
+			swap.MustSweepoff()
+			bundle.DownloadPackages()
+			install.InstallPackages()
+			kubeadm.Init()
 		},
 	}
 }

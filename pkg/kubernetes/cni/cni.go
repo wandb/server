@@ -3,11 +3,11 @@ package cni
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"path"
 	"runtime"
 
-	"github.com/pterm/pterm"
-	"github.com/wandb/server/pkg/download"
-	"github.com/wandb/server/pkg/files"
+	"github.com/wandb/server/pkg/dependency"
 )
 
 const GithubRepo = "https://github.com/containernetworking/plugins"
@@ -22,12 +22,41 @@ func DownloadURL(version string) string {
 	)
 }
 
-func Download(version string, path string) error {
-	return download.HTTPDownloadAndSave(DownloadURL(version), path)
+func NewPackage(version string, dest string) dependency.Package {
+	return &CNIPluginPackage{version, dest}
 }
 
-func Install(tarFile string) {
-	pterm.Info.Printf("Installing cni plugins from %s\n", tarFile)
-	os.MkdirAll("/opt/cni/bin", 0755)
-	files.ExtractTarGz(tarFile, "/opt/cni/bin")
+type CNIPluginPackage struct{
+	version string
+	dest string
+}
+
+func (p CNIPluginPackage) Version() string {
+	return p.version
+}
+
+func (p CNIPluginPackage) path() string {
+	pa := path.Join(p.dest, p.Name(), p.version)
+	os.MkdirAll(pa, 0755)
+	return pa
+}
+
+func (p CNIPluginPackage) Install() error {
+	err := os.MkdirAll("/opt/cni/bin", 0755)
+	if err != nil {
+		return err
+	}
+	tar := path.Join(p.path(), "cni-plugins.tgz")
+	return exec.Command("tar", "-xzf", tar, "-C", "/opt/cni/bin").Run()
+}
+
+func (p CNIPluginPackage) Download() error {
+	return dependency.HTTPDownloadAndSave(
+		DownloadURL(p.version),
+		path.Join(p.path(), "cni-plugins.tgz"),
+	)
+}
+
+func (p CNIPluginPackage) Name() string {
+	return "cni-plugins"
 }

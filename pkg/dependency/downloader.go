@@ -1,4 +1,4 @@
-package download
+package dependency
 
 import (
 	"io"
@@ -20,4 +20,11 @@ func HTTPDownloadAndSave(url string, filename string) error {
 
 	err = os.WriteFile(filename, data, 0644)
 	return err
+}
+
+type Package interface {
+	Version() string
+	Name() string
+	Install() error
+	Download() error
 }

@@ -5,9 +5,7 @@ import (
 	"os/exec"
 )
 
-func DownloadImageWithDocker(name string, tag string, filename string) error {
-	image := fmt.Sprintf("%s:%s", name, tag)
-
+func DownloadImage(image string, filename string) error {
 	cmdPull := exec.Command("docker", "pull", image)
 	err := cmdPull.Run()
 	if err != nil {

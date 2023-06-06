@@ -16,15 +16,14 @@ func LoadImage(file string) error {
 }
 
 
-func DownloadImage(name string, tag string, filename string) error {
+func DownloadImage(name string, filename string) error {
 	client := Client()
 	defer client.Close()
 	ctx := context.Background()
 
-	imageURL := fmt.Sprintf("%s:%s", name, tag)
 	image, err := client.Pull(
 		ctx,
-		imageURL,
+		name,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to pull Containerd image %s: %v", image, err)

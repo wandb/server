@@ -8,15 +8,15 @@ import (
 	"github.com/wandb/server/pkg/kubernetes/docker"
 )
 
-// ImageDownloadAndSave downloads an image and saves it to a file.
-func DownloadImageAndSave(image string, tag string, filename string) error {
+// Download downloads an image and saves it to a file.
+func Download(image string, filename string) error {
 	_, err := exec.LookPath("docker")
 	if err != nil {
-		return docker.DownloadImageWithDocker(image, tag, filename)
+		return docker.DownloadImage(image, filename)
 	}
 
 	if containerd.IsInstalled() {
-		return containerd.DownloadImage(image, tag, filename)
+		return containerd.DownloadImage(image, filename)
 	}
 
 	return fmt.Errorf("no supported container runtime found")

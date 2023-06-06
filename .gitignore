@@ -12,3 +12,5 @@ js/
 packages
 .DS_store
 *.log
+
+bin

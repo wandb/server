@@ -6,13 +6,14 @@ import (
 
 	_ "embed"
 
+	"github.com/pterm/pterm"
 	"github.com/wandb/server/pkg/linux"
 )
 
 //go:embed k8s.conf
 var modulesConfig string
 
-func LoadModules() {
+func LoadModules() error {
 	linux.Modprobe("overlay")
 	linux.Modprobe("br_netfilter")
 
@@ -27,7 +28,7 @@ func LoadModules() {
 	linux.Modprobe("nf_conntrack")
 
 	os.MkdirAll("/etc/modules-load.d", 0755)
-	os.WriteFile(
+	return 	os.WriteFile(
 		"/etc/modules-load.d/k8s.conf",
 		[]byte(modulesConfig),
 		0600,
@@ -37,14 +38,15 @@ func LoadModules() {
 //go:embed ip.conf
 var systemdConf string
 
-func LoadSystemdModules() {
+func LoadSystemdModules() error {
+	pterm.Info.Println("Adding kubeadm to sysctl")
 	os.MkdirAll("/etc/sysctl.d", 0755)
 	os.WriteFile(
-		"/etc/sysctl -a.d/k8s-ipv4.conf",
+		"/etc/sysctl.d/k8s-network.conf",
 		[]byte(systemdConf),
 		0600,
 	)
-	reloadSysctl()
+	return reloadSysctl()
 }
 
 func reloadSysctl() error {
