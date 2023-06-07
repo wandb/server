@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/wandb/server/pkg/dependency"
@@ -48,9 +49,12 @@ func (p FlannelPackage) Download() error {
 	f, _ := os.ReadFile(path.Join(p.path(), "kube-flannel.yml"))
 	imgs, _ := kubernetes.GetImagesFromManifest(string(f))
 	for _, image := range imgs {
-		dir := path.Join(p.path(), strings.Split(image, ":")[0])
-		os.MkdirAll(dir, 0755)
-		images.Download(image, path.Join(dir, "image.tar"))
+		file := path.Join(p.path(), strings.Split(image, ":")[0]+".tar")
+		os.MkdirAll(filepath.Dir(file), 0755)
+		err := images.Download(image, file)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

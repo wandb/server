@@ -11,7 +11,7 @@ import (
 // Download downloads an image and saves it to a file.
 func Download(image string, filename string) error {
 	_, err := exec.LookPath("docker")
-	if err != nil {
+	if err == nil {
 		return docker.DownloadImage(image, filename)
 	}
 

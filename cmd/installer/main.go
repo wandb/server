@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"os"
 
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"github.com/wandb/server/pkg/cmd/bundle"
 	"github.com/wandb/server/pkg/cmd/install"
+	"github.com/wandb/server/pkg/config"
 	"github.com/wandb/server/pkg/kubernetes/kubeadm"
 	"github.com/wandb/server/pkg/linux/swap"
 )
@@ -20,23 +22,30 @@ func RootCmd() *cobra.Command {
 
 func BundleCmd() *cobra.Command {
 	return &cobra.Command{
-		Use: "bundle",
+		Use:   "bundle",
 		Short: "Creates an Airgap bunddle",
 		Run: func(cmd *cobra.Command, args []string) {
-			bundle.DownloadPackages()
+			bundle.DownloadAllPackages()
 		},
 	}
 }
 
 func InstallCommand() *cobra.Command {
 	return &cobra.Command{
-		Use: "install",
+		Use:   "install",
 		Short: "Runs the installer",
 		Run: func(cmd *cobra.Command, args []string) {
 			swap.MustSweepoff()
-			bundle.DownloadPackages()
-			install.InstallPackages()
+
+			bundle.DownloadAllPackages()
+			bundle.DownloadImages()
+
+			install.InstallKubernetes()
+
 			kubeadm.Init()
+
+			install.InstallKubernetesAddons()
+			install.InstallWandbOperator()
 		},
 	}
 }
@@ -63,6 +72,8 @@ func init() {
 func main() {
 	ctx := context.Background()
 	cmd := RootCmd()
+
+	os.MkdirAll(config.Config.Dir, 0755)
 
 	cmd.AddCommand(InstallCommand())
 	cmd.AddCommand(BundleCmd())

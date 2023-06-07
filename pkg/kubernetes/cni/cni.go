@@ -26,9 +26,9 @@ func NewPackage(version string, dest string) dependency.Package {
 	return &CNIPluginPackage{version, dest}
 }
 
-type CNIPluginPackage struct{
+type CNIPluginPackage struct {
 	version string
-	dest string
+	dest    string
 }
 
 func (p CNIPluginPackage) Version() string {

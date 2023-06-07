@@ -7,7 +7,7 @@ import (
 	"github.com/pterm/pterm"
 )
 
-func Client() (*containerd.Client) {
+func Client() *containerd.Client {
 	client, err := containerd.New("/run/containerd/containerd.sock")
 	pterm.Fatal.PrintOnError(err, "failed to create containerd client")
 	return client

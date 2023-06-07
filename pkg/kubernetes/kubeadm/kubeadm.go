@@ -27,15 +27,6 @@ func DownloadURL(version string) string {
 }
 
 func Init() {
-	init, _ := pterm.DefaultSpinner.Start("Initalizing kubeadm")
-	err := initCmd()
-	if err != nil {
-		init.Fail("Failed to initialize kubeadm cluster")
-		os.Exit(1)
-	}
-
-	init.Success("Initialized kubeadm")
-
 	health, _ := pterm.DefaultSpinner.Start("Waiting for kubeadm to be in healthy state")
 	retry := 0
 	for !IsHealthy() {
@@ -43,7 +34,7 @@ func Init() {
 		if retry > 10 {
 			health.Fail("Kubeadm unhealthy after 10 retries. Exiting.")
 			os.Exit(1)
-			return 
+			return
 		}
 		time.Sleep(1 * time.Second)
 	}
@@ -53,7 +44,7 @@ func Init() {
 func IsHealthy() bool {
 	privateIP, _ := networking.GetPrivateIP()
 	url := fmt.Sprintf("https://%s:%s/healthz", privateIP, "6443")
-	
+
 	transport := &http.Transport{
 		DialContext: (&net.Dialer{
 			Timeout:   30 * time.Second,
@@ -92,18 +83,7 @@ func IsHealthy() bool {
 	return true
 }
 
-func initCmd() error {
-	cmd := exec.Command(
-		"kubeadm", "init",
-		"--control-plane-endpoint=",
-		"--pod-network-cidr=",
-		"--ignore-preflight-errors=all")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	return cmd.Run()
-}
-
-func NewPackage(version string, dest string) dependency.Package {
+func NewPackage(version string, dest string) *KubeadmPackage {
 	return &KubeadmPackage{version, dest}
 }
 
@@ -116,6 +96,19 @@ func (p KubeadmPackage) path() string {
 	pa := path.Join(p.dest, p.Name(), p.version)
 	os.MkdirAll(pa, 0755)
 	return pa
+}
+
+func (p KubeadmPackage) Init() error {
+	privateIP, _ := networking.GetPrivateIP()
+	controlEndpoint := privateIP + ":6443"
+	cmd := exec.Command(
+		"kubeadm", "init",
+		"--control-plane-endpoint="+controlEndpoint,
+		"--pod-network-cidr=",
+		"--ignore-preflight-errors=all")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
 }
 
 func (p KubeadmPackage) Version() string {

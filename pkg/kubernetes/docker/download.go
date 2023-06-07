@@ -23,5 +23,5 @@ func DownloadImage(image string, filename string) error {
 
 func IsInstalled() bool {
 	_, err := exec.LookPath("docker")
-	return err != nil
+	return err == nil
 }
