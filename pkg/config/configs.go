@@ -3,6 +3,8 @@ package config
 import (
 	"github.com/spf13/viper"
 	"github.com/wandb/server/pkg/dependency"
+	"github.com/wandb/server/pkg/images"
+	"github.com/wandb/server/pkg/kubernetes/addons/contour"
 	"github.com/wandb/server/pkg/kubernetes/addons/flannel"
 	"github.com/wandb/server/pkg/kubernetes/cni"
 	"github.com/wandb/server/pkg/kubernetes/conntrack"
@@ -32,6 +34,7 @@ type config struct {
 	Helm       string
 	Conntract  string
 	Runc       string
+	Contour    string
 }
 
 var Config config
@@ -64,7 +67,6 @@ func KubernetesPackages() []dependency.Package {
 		crictl.NewPackage(Config.Crictl, Config.Dir),
 		runc.NewPackage(Config.Runc, Config.Dir),
 		conntrack.NewPackage(Config.Conntract, Config.Dir),
-		flannel.NewPackage(Config.Flannel, Config.Dir),
 		helm.NewPackage(Config.Helm, Config.Dir),
 	}
 }
@@ -72,5 +74,14 @@ func KubernetesPackages() []dependency.Package {
 func KubernetesAddonPackages() []dependency.Package {
 	return []dependency.Package{
 		flannel.NewPackage(Config.Flannel, Config.Dir),
+		contour.NewPackage(Config.Contour, Config.Dir),
 	}
+}
+
+func KubernetesImages() []dependency.Package {
+	pkgs := []dependency.Package{}
+	for _, img := range Config.Kubernetes.Images {
+		pkgs = append(pkgs, images.NewPackage(img, Config.Dir))
+	}
+	return pkgs
 }

@@ -1,4 +1,4 @@
-package flannel
+package contour
 
 import (
 	"fmt"
@@ -10,43 +10,40 @@ import (
 	"github.com/wandb/server/pkg/kubernetes"
 )
 
-const githubRepo = "https://github.com/flannel-io/flannel"
-
 func manifestURL(version string) string {
 	return fmt.Sprintf(
-		"%s/releases/download/v%s/kube-flannel.yml",
-		githubRepo,
+		"https://raw.githubusercontent.com/projectcontour/contour/release-%s/examples/render/contour.yaml",
 		version,
 	)
 }
 
 func NewPackage(version string, dest string) dependency.Package {
-	return &FlannelPackage{version, dest}
+	return &ContourPackage{version, dest}
 }
 
-// FlannelPackage is a package for installing flannel. Flannel is a Kubernetes
-// network fabric for containers.
-type FlannelPackage struct {
+// ContourPackage is a package for installing contour. Contour is a Kubernetes
+// ingress controller for Lyft's Envoy proxy.
+type ContourPackage struct {
 	version string
 	dest    string
 }
 
-func (p FlannelPackage) path() string {
+func (p ContourPackage) path() string {
 	pa := path.Join(p.dest, p.Name(), p.version)
 	os.MkdirAll(pa, 0755)
 	return pa
 }
 
-func (p FlannelPackage) Download() error {
+func (p ContourPackage) Download() error {
 	err := dependency.HTTPDownloadAndSave(
 		manifestURL(p.version),
-		path.Join(p.path(), "kube-flannel.yml"),
+		path.Join(p.path(), "kube-contour.yml"),
 	)
 	if err != nil {
 		return err
 	}
 
-	f, _ := os.ReadFile(path.Join(p.path(), "kube-flannel.yml"))
+	f, _ := os.ReadFile(path.Join(p.path(), "kube-contour.yml"))
 	imgs, err := kubernetes.GetImagesFromManifest(string(f))
 	if err != nil {
 		return err
@@ -60,14 +57,14 @@ func (p FlannelPackage) Download() error {
 	return nil
 }
 
-func (p FlannelPackage) Install() error {
+func (p ContourPackage) Install() error {
 	panic("unimplemented")
 }
 
-func (p FlannelPackage) Name() string {
-	return "flannel"
+func (p ContourPackage) Name() string {
+	return "contour"
 }
 
-func (p FlannelPackage) Version() string {
+func (p ContourPackage) Version() string {
 	return p.version
 }

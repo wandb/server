@@ -14,7 +14,6 @@ func GetImagesFromManifest(data string) ([]string, error) {
 	dec := yaml.NewDecodingSerializer(unstructured.UnstructuredJSONScheme)
 	images := make([]string, 0)
 	chunks := strings.Split(data, "---")
-
 	for _, chunk := range chunks {
 		chunk = strings.TrimSpace(chunk)
 		if len(chunk) == 0 {
@@ -24,7 +23,7 @@ func GetImagesFromManifest(data string) ([]string, error) {
 		obj := &unstructured.Unstructured{}
 		_, _, err := dec.Decode([]byte(chunk), nil, obj)
 		if err != nil {
-			return nil, fmt.Errorf("error decoding manifests: %v", err)
+			continue
 		}
 
 		containers, _, _ := unstructured.NestedSlice(obj.Object, "spec", "template", "spec", "containers")

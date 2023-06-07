@@ -13,6 +13,10 @@ func DownloadAllPackages() {
 		config.KubernetesPackages(),
 		config.KubernetesAddonPackages()...,
 	)
+	packages = append(
+		packages,
+		config.KubernetesImages()...,
+	)
 
 	progressbar, _ := pterm.DefaultProgressbar.
 		WithTotal(len(packages)).

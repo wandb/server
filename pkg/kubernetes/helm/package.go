@@ -3,6 +3,7 @@ package helm
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"runtime"
 
@@ -39,8 +40,9 @@ func (p HelmPackage) Download() error {
 	)
 }
 
-func (*HelmPackage) Install() error {
-	panic("unimplemented")
+func (p HelmPackage) Install() error {
+	tar := path.Join(p.path(), "helm.tar.gz")
+	return exec.Command("tar", "-xzf", tar, "-C", "/usr/local/bin").Run()
 }
 
 func (HelmPackage) Name() string {

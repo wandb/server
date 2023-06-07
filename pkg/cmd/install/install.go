@@ -33,7 +33,7 @@ func InstallKubernetesAddons() {
 
 	progressbar, _ := pterm.DefaultProgressbar.
 		WithTotal(len(packages)).
-		WithTitle("Installing kubernetes").
+		WithTitle("Installing kubernetes addons").
 		Start()
 
 	wg := sync.WaitGroup{}
@@ -49,4 +49,5 @@ func InstallKubernetesAddons() {
 }
 
 func InstallWandbOperator() {
+	pterm.Fatal.Println("Not implemented")
 }
