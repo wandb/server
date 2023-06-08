@@ -1,6 +1,11 @@
 package bundle
 
 import (
+	"archive/tar"
+	"compress/gzip"
+	"io"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/pterm/pterm"
@@ -44,6 +49,64 @@ func DownloadAllPackages() {
 	progressbar.Stop()
 }
 
-func DownloadImages() {
+func CreateBundle(dest string) error {
+	srcs := []string{
+		config.Config.Dir,
+		"installer",
+		"configs",
+		"config.yaml",
+		"install.sh",
+		"LICENSE",
+		"SECURITY.md",
+	}
 
+	destFile, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	gzipWriter := gzip.NewWriter(destFile)
+	defer gzipWriter.Close()
+
+	tarWriter := tar.NewWriter(gzipWriter)
+	defer tarWriter.Close()
+
+	for _, src := range srcs {
+		err := filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+
+			header, err := tar.FileInfoHeader(info, info.Name())
+			if err != nil {
+				return err
+			}
+			header.Name = filepath.ToSlash(path)
+
+			if err := tarWriter.WriteHeader(header); err != nil {
+				return err
+			}
+
+			// Write file content
+			if !info.Mode().IsRegular() {
+				return nil
+			}
+
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			_, err = io.Copy(tarWriter, file)
+			return err
+		})
+
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

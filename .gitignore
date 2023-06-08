@@ -14,3 +14,6 @@ packages
 *.log
 
 bin
+
+installer
+installer.tar.gz

@@ -26,6 +26,7 @@ func BundleCmd() *cobra.Command {
 		Short: "Creates an Airgap bunddle",
 		Run: func(cmd *cobra.Command, args []string) {
 			bundle.DownloadAllPackages()
+			bundle.CreateBundle("./installer.tar.gz")
 		},
 	}
 }
@@ -38,8 +39,6 @@ func InstallCommand() *cobra.Command {
 			swap.MustSweepoff()
 
 			bundle.DownloadAllPackages()
-			bundle.DownloadImages()
-
 			install.InstallKubernetes()
 
 			kubeadm.Init()
