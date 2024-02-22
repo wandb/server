@@ -2,9 +2,15 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
+	"github.com/wandb/server/pkg/deployer"
 	"github.com/wandb/server/pkg/helm"
+	"github.com/wandb/server/pkg/images"
 )
 
 func RootCmd() *cobra.Command {
@@ -19,7 +25,30 @@ func DownloadCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "download",
 		Run: func(cmd *cobra.Command, args []string) {
-			helm.DownloadChart("https://charts.wandb.ai", "operator-wandb", "0.10.42")
+			spec, err := deployer.GetChannelSpec("")
+			if err != nil {
+				panic(err)
+			}
+
+			chart, _ := helm.DownloadChart(
+				spec.Chart.URL, spec.Chart.Name, spec.Chart.Version)
+			runs, _ := helm.GetRuntimeObjects(chart, spec.Values)
+			imgs := helm.ExtractImages(runs)
+			wg := sync.WaitGroup{}
+			for _, image := range imgs {
+				wg.Add(1)
+				go func(image string) {
+					fmt.Println("Downloading", image)
+					path := "bundle/images/" + strings.ReplaceAll(image, ":", "/")
+					os.MkdirAll(path, 0755)
+					err := images.Download(image, path + "/image.tgz")
+					if err != nil {
+						fmt.Println(err)
+					}
+					wg.Done()
+				}(image)
+			}
+			wg.Wait()
 		},
 	}
 

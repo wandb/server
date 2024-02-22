@@ -1,6 +1,7 @@
 package deployer
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"os"
@@ -15,7 +16,16 @@ func GetURL() string {
 	return DeployerAPI
 }
 
-func GetChannelSpec(license string) ([]byte, error) {
+type Spec struct {
+	Chart  struct {
+		URL string `json:"url"`
+		Version string `json:"version"`
+		Name string `json:"name"`
+	} `json:"chart"`
+	Values map[string]interface{} `json:"values"`
+}
+
+func GetChannelSpec(license string) (*Spec, error) {
 	url := GetURL()
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -34,5 +44,16 @@ func GetChannelSpec(license string) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	return io.ReadAll(resp.Body)
+	resBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	spec := new(Spec)
+	err = json.Unmarshal(resBody, &spec)
+	if err != nil {
+		return nil, err
+	}
+
+	return spec, nil
 }
