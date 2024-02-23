@@ -12,6 +12,7 @@ import (
 	"github.com/wandb/server/pkg/images"
 	"github.com/wandb/server/pkg/term/pkgm"
 	"github.com/wandb/server/pkg/utils"
+	"gopkg.in/yaml.v2"
 )
 
 func RootCmd() *cobra.Command {
@@ -71,6 +72,14 @@ func DownloadCmd() *cobra.Command {
 
 			spec, err := deployer.GetChannelSpec("")
 			if err != nil {
+				panic(err)
+			}
+
+			yamlData, err := yaml.Marshal(spec)
+			if err != nil {
+				panic(err)
+			}
+			if err = os.WriteFile("bundle/spec.yaml", yamlData, 0644); err != nil {
 				panic(err)
 			}
 
