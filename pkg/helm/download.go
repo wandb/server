@@ -1,8 +1,6 @@
 package helm
 
 import (
-	"os"
-
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
@@ -20,7 +18,12 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
-func DownloadChart(url string, name string, version string) (string, error) {
+func DownloadChart(
+	url string,
+	name string,
+	version string,
+	dest string,
+) (string, error) {
 	entry := new(repo.Entry)
 	entry.URL = url
 	entry.Name = name
@@ -65,9 +68,6 @@ func DownloadChart(url string, name string, version string) (string, error) {
 		RepositoryCache:  settings.RepositoryCache,
 	}
 
-	dest := "./bundle/chart"
-	os.MkdirAll(dest, 0755)
-
 	saved, _, err := client.DownloadTo(chartURL, version, dest)
 	if err != nil {
 		return "", err
@@ -81,7 +81,7 @@ const DefaultReleaseName = "wandb"
 func GetRuntimeObjects(chartPath string, vals map[string]interface{}) ([]runtime.Object, error) {
 	_, c, _ := InitConfig("")
 
-    chart, err := loader.Load(chartPath)
+	chart, err := loader.Load(chartPath)
 	if err != nil {
 		return nil, err
 	}
@@ -123,38 +123,38 @@ func ExtractImages(obj []runtime.Object) []string {
 func ExtractImage(obj runtime.Object) []string {
 	var images []string
 	switch typedObj := obj.(type) {
-    case *v1.Pod:
-        for _, container := range typedObj.Spec.Containers {
-            images = append(images, container.Image)
-        }
+	case *v1.Pod:
+		for _, container := range typedObj.Spec.Containers {
+			images = append(images, container.Image)
+		}
 	case *v1.ReplicationController:
-        for _, container := range typedObj.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
-    case *appsv1.ReplicaSet:
-        for _, container := range typedObj.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
+		for _, container := range typedObj.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
+	case *appsv1.ReplicaSet:
+		for _, container := range typedObj.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
 	case *appsv1.Deployment:
-        for _, container := range typedObj.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
-    case *appsv1.StatefulSet:
-        for _, container := range typedObj.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
-    case *appsv1.DaemonSet:
-        for _, container := range typedObj.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
-    case *batchv1.Job:
-        for _, container := range typedObj.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
-    case *batchv1beta1.CronJob:
-        for _, container := range typedObj.Spec.JobTemplate.Spec.Template.Spec.Containers {
-            images = append(images, container.Image)
-        }
+		for _, container := range typedObj.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
+	case *appsv1.StatefulSet:
+		for _, container := range typedObj.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
+	case *appsv1.DaemonSet:
+		for _, container := range typedObj.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
+	case *batchv1.Job:
+		for _, container := range typedObj.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
+	case *batchv1beta1.CronJob:
+		for _, container := range typedObj.Spec.JobTemplate.Spec.Template.Spec.Containers {
+			images = append(images, container.Image)
+		}
 	}
 	return images
 }
