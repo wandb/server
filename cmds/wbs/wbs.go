@@ -1,4 +1,4 @@
-package main
+package wbs
 
 import (
 	"context"
@@ -6,13 +6,12 @@ import (
 	"os"
 	"path"
 
-	"github.com/helm/helm/v3/pkg/chart/loader"
 	"github.com/spf13/cobra"
 	"github.com/wandb/server/pkg/deployer"
 	"github.com/wandb/server/pkg/helm"
+	"github.com/wandb/server/pkg/helm/values"
 	"github.com/wandb/server/pkg/images"
 	"github.com/wandb/server/pkg/term/pkgm"
-	"github.com/wandb/server/pkg/term/task"
 	"github.com/wandb/server/pkg/utils"
 	"gopkg.in/yaml.v2"
 )
@@ -57,14 +56,11 @@ func DownloadCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "download",
 		Run: func(cmd *cobra.Command, args []string) {
-			// TODO: make this download latest chart and use the latest
-			// controller docker image by default the chart would download
-			// latest and we should probably explicitly set the value
 			fmt.Println("Downloading operator helm chart")
 			operatorImgs, _ := downloadChartImages(
-				"https://charts.wandb.ai",
-				"operator",
-				"1.1.0",
+				helm.WandbHelmRepoURL,
+				helm.WandbOperatorChart,
+				"", // empty version means latest
 				map[string]interface{}{
 					"image": map[string]interface{}{
 						"tag": "1.10.1",
@@ -123,6 +119,7 @@ func DeployCmd() *cobra.Command {
 	var bundlePath string
 	var namespace string
 	releaseName := "wandb"
+	var valuesPath string
 
 	cmd := &cobra.Command{
 		Use: "deploy",
@@ -137,39 +134,29 @@ func DeployCmd() *cobra.Command {
 			os.MkdirAll(chartsDir, 0755)
 
 			if !deployWithOperator {
-				spec, err := deployer.GetChannelSpec("")
-				if err != nil {
-					panic(err)
+				spec := GetChannelSpec()
+				// Merge user values with spec values
+				vals := spec.Values
+				if localVals, err := values.FromYAMLFile(valuesPath); err == nil {
+					if finalVals, err := vals.Merge(localVals); err != nil {
+						vals = finalVals
+					}
 				}
 
-				chartPath, err := helm.DownloadChart(
-					spec.Chart.URL,
-					spec.Chart.URL,
-					spec.Chart.Version,
-					chartsDir,
-				)
-				if err != nil {
-					fmt.Println("could download wandb helm chart: %s", err)
-					os.Exit(1)
-				}
-				
-				chart, err := loader.Load(chartPath)
-
-				cb := func() {
-					helm.Apply(namespace, releaseName, chart, spec.Values)
-				}
-				if _, err := task.New("Deploying wandb", cb); err != nil {
-					os.Exit(1)
-				}
-
-				os.Exit(0)
+				// chartPath := DownloadHelmChart(
+				// 	spec.Chart.URL, spec.Chart.Name, spec.Chart.Version, chartsDir)
+				// chart := LoadChart(chartPath)
+				// DeployChart(namespace, releaseName, chart, vals.AsMap())
+				os.Exit(1)
 			}
 		},
 	}
 
 	cmd.Flags().BoolVarP(&deployWithOperator, "operator", "o", true, "Deploy the system using the operator pattern.")
 	cmd.Flags().StringVarP(&bundlePath, "bundle", "b", "", "Path to the bundle to deploy with.")
+	cmd.Flags().StringVarP(&bundlePath, "values", "v", "", "Values file to apply to the helm chart yaml.")
 	cmd.Flags().StringVarP(&namespace, "namespace", "n", "wandb", "Namespace to deploy into.")
+	cmd.Flags().StringVarP(&valuesPath, "values", "v", "wandb", "Path to a yaml values file.")
 
 	cmd.Flags().MarkHidden("operator")
 

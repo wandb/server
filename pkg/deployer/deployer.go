@@ -5,6 +5,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	"github.com/wandb/server/pkg/helm/values"
 )
 
 const DeployerAPI = "https://deploy.wandb.ai/api/v1/operator/channel"
@@ -17,12 +19,12 @@ func GetURL() string {
 }
 
 type Spec struct {
-	Chart  struct {
-		URL string `json:"url"`
+	Chart struct {
+		URL     string `json:"url"`
 		Version string `json:"version"`
-		Name string `json:"name"`
+		Name    string `json:"name"`
 	} `json:"chart"`
-	Values map[string]interface{} `json:"values"`
+	Values values.Values `json:"values"`
 }
 
 func GetChannelSpec(license string) (*Spec, error) {
