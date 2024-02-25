@@ -13,9 +13,10 @@ var (
 )
 
 
-func New(text string, callback func()) *tea.Program {
+func New(text string, callback func() error) *tea.Program {
 	s := spinner.New()
-	// s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("63"))
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("63"))
+	s.Spinner = spinner.Dot
 	return tea.NewProgram(&model{
 		text: text,
 		callback: callback,
@@ -27,26 +28,30 @@ type taskComplete struct {}
 
 type model struct {
 	text string
-	callback func()
+	callback func() error
 	spinner  spinner.Model
 	quitting bool
 	done bool
+	err error
 }
 
 func (m model) Init() tea.Cmd {
-	return func() tea.Msg {
-		if m.callback != nil {
-			m.callback()
-		}
-		return taskComplete{}
-	}
+	return tea.Batch(
+		func() tea.Msg {
+			if m.callback != nil {
+				m.err = m.callback()
+			}
+			return taskComplete{}
+		}, 
+		m.spinner.Tick,
+	)
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case taskComplete:
 		m.done = true
-		return m, nil
+		return m, tea.Quit
 
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -65,6 +70,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
+	if m.err != nil {
+		return doneStyle.Render(fmt.Sprintf("%s exited: %s\n",m.text, m.err))
+	}
 	if m.quitting {
 		return doneStyle.Render(fmt.Sprintf("%s exited.\n", m.text))
 	}

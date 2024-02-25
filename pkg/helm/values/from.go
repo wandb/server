@@ -1,7 +1,6 @@
 package values
 
 import (
-	"encoding/json"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -16,17 +15,25 @@ func FromYAMLFile(path string) (Values, error) {
 }
 
 func FromYAML(data []byte) (Values, error) {
-	vals := new(Values)
-	if err := yaml.Unmarshal(data, &vals); err != nil {
+	var intermediate map[interface{}]interface{}
+	if err := yaml.Unmarshal(data, &intermediate); err != nil {
 		return nil, err
 	}
-	return *vals, nil
+	coverted := convertMapKeysToStrings(intermediate)
+	return coverted, nil
 }
 
-func FromJSON(data []byte) (Values, error) {
-	vals := new(Values)
-	if err := json.Unmarshal(data, &vals); err != nil {
-		return nil, err
+func convertMapKeysToStrings(originalMap map[interface{}]interface{}) map[string]interface{} {
+	newMap := make(map[string]interface{})
+	for key, value := range originalMap {
+		strKey, ok := key.(string)
+		if !ok {
+			continue // or handle the error as appropriate
+		}
+		if subMap, isSubMap := value.(map[interface{}]interface{}); isSubMap {
+			value = convertMapKeysToStrings(subMap)
+		}
+		newMap[strKey] = value
 	}
-	return *vals, nil
+	return newMap
 }

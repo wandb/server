@@ -1,6 +1,8 @@
-package wbs
+package deploy
 
 import (
+	"time"
+
 	"github.com/wandb/server/pkg/deployer"
 	"github.com/wandb/server/pkg/helm"
 	"github.com/wandb/server/pkg/term/task"
@@ -48,8 +50,10 @@ func DeployChart(
 	chart *chart.Chart,
 	vals map[string]interface{},
 ) {
-	cb := func() {
-		helm.Apply(namespace, releaseName, chart, vals)
+	cb := func() error {
+		_, err := helm.Apply(namespace, releaseName, chart, vals)
+		time.Sleep(5 * time.Second)
+		return err
 	}
 	if _, err := task.New("Deploying wandb", cb).Run(); err != nil {
 		panic(err)

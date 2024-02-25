@@ -1,12 +1,14 @@
-package wbs
+package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
 
 	"github.com/spf13/cobra"
+	"github.com/wandb/server/cmds/wbs/deploy"
 	"github.com/wandb/server/pkg/deployer"
 	"github.com/wandb/server/pkg/helm"
 	"github.com/wandb/server/pkg/helm/values"
@@ -115,26 +117,27 @@ func DownloadCmd() *cobra.Command {
 }
 
 func DeployCmd() *cobra.Command {
-	var deployWithOperator bool
+	var deployWithHelm bool
 	var bundlePath string
 	var namespace string
 	releaseName := "wandb"
 	var valuesPath string
+	var chartPath string
 
 	cmd := &cobra.Command{
 		Use: "deploy",
 		Run: func(cmd *cobra.Command, args []string) {
 			homedir, err := os.UserHomeDir()
 			if err != nil {
-				fmt.Println("could not find home dir: %s", err)
+				fmt.Printf("could not find home dir: %v", err)
 				os.Exit(1)
 			}
 
 			chartsDir := path.Join(homedir, ".wandb", "charts")
 			os.MkdirAll(chartsDir, 0755)
 
-			if !deployWithOperator {
-				spec := GetChannelSpec()
+			if deployWithHelm {
+				spec := deploy.GetChannelSpec()
 				// Merge user values with spec values
 				vals := spec.Values
 				if localVals, err := values.FromYAMLFile(valuesPath); err == nil {
@@ -143,22 +146,28 @@ func DeployCmd() *cobra.Command {
 					}
 				}
 
-				// chartPath := DownloadHelmChart(
-				// 	spec.Chart.URL, spec.Chart.Name, spec.Chart.Version, chartsDir)
-				// chart := LoadChart(chartPath)
-				// DeployChart(namespace, releaseName, chart, vals.AsMap())
-				os.Exit(1)
+				if chartPath == "" {
+					fmt.Println("Downloading W&B chart from", spec.Chart.URL)
+					chartPath = deploy.DownloadHelmChart(
+						spec.Chart.URL, spec.Chart.Name, spec.Chart.Version, chartsDir)
+				}
+				chart := deploy.LoadChart(chartPath)
+				if _, err := json.Marshal(vals.AsMap()); err != nil {
+					panic(err)
+				}
+				deploy.DeployChart(namespace, releaseName, chart, vals.AsMap())
+				os.Exit(0)
 			}
 		},
 	}
 
-	cmd.Flags().BoolVarP(&deployWithOperator, "operator", "o", true, "Deploy the system using the operator pattern.")
+	cmd.Flags().BoolVarP(&deployWithHelm, "helm", "", false, "Deploy the system using the helm (not recommended).")
 	cmd.Flags().StringVarP(&bundlePath, "bundle", "b", "", "Path to the bundle to deploy with.")
-	cmd.Flags().StringVarP(&bundlePath, "values", "v", "", "Values file to apply to the helm chart yaml.")
+	cmd.Flags().StringVarP(&valuesPath, "values", "v", "", "Values file to apply to the helm chart yaml.")
 	cmd.Flags().StringVarP(&namespace, "namespace", "n", "wandb", "Namespace to deploy into.")
-	cmd.Flags().StringVarP(&valuesPath, "values", "v", "wandb", "Path to a yaml values file.")
+	cmd.Flags().StringVarP(&namespace, "chart", "c", "", "Path to W&B helm chart.")
 
-	cmd.Flags().MarkHidden("operator")
+	cmd.Flags().MarkHidden("helm")
 
 	return cmd
 }
