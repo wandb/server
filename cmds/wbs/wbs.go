@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -16,6 +17,8 @@ import (
 	"github.com/wandb/server/pkg/kubectl"
 	"github.com/wandb/server/pkg/utils"
 	"gopkg.in/yaml.v2"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
@@ -138,7 +141,7 @@ func deployOperator(chartsDir string, namespace string, releaseName string) erro
 
 	operatorChart := deploy.LoadChart(operatorChartPath)
 	if operatorChart == nil {
-		return fmt.Errorf("Could not load chart")
+		return errors.New("could not find operator chart")
 	}
 
 	wandbChartPath := deploy.DownloadHelmChart(
@@ -169,6 +172,41 @@ type LocalSpec struct {
 		Path string `json:"path" yaml:"path"`
 	} `json:"chart" yaml:"chart"`
 	Values values.Values `json:"values" yaml:"values"`
+}
+
+func applyWeightAndBiases(namespace string, vals values.Values) error {
+	_, cs, err := kubectl.GetClientset()
+	if err != nil {
+		return err
+	}
+
+	gvr := schema.GroupVersionResource{
+		Group:    "apps.wandb.com",
+		Version:  "v1",
+		Resource: "weightsandbiases",
+	}
+
+	localSpec := LocalSpec{
+		Chart: struct {
+			Path string `json:"path" yaml:"path"`
+		}{
+			Path: fmt.Sprintf("charts/%s", helm.WandbChart),
+		},
+		Values: vals,
+	}
+
+	localSpecJson, err := json.Marshal(localSpec)
+	if err != nil {
+		return err
+	}
+
+	var unstructuredSpec unstructured.Unstructured
+	if err := json.Unmarshal(localSpecJson, &unstructuredSpec); err != nil {
+		return err
+	}
+
+	_, err = cs.Resource(gvr).Namespace(namespace).Apply(context.Background(), "wandb", &unstructuredSpec, v1.ApplyOptions{})
+	return err
 }
 
 func DeployCmd() *cobra.Command {
@@ -219,27 +257,11 @@ func DeployCmd() *cobra.Command {
 				os.Exit(1)
 			}
 
-			// deploy weightsandbiases crd
-			_, cs, err := kubectl.GetClientset()
-			if err != nil {
-				fmt.Println("Error getting clientset:", err)
+			if err := applyWeightAndBiases(namespace, vals); err != nil {
+				fmt.Println("Error deploying weightsandbiases:", err)
 				os.Exit(1)
 			}
 
-			gvr := schema.GroupVersionResource{
-				Group:    "apps.wandb.com",
-				Version:  "v1",
-				Resource: "weightsandbiases",
-			}
-
-			localSpec := LocalSpec{
-				Chart: struct {
-					Path string `json:"path" yaml:"path"`
-				}{
-					Path: fmt.Sprintf("charts/%s", helm.WandbChart),
-				},
-				Values: vals,
-			}
 			// cs.AppsV1().RESTClient().Post().Resource("deployments").Namespace("default").Body(`{"apiVersion":"apps/v1","kind":"Deployment","metadata":{"name":"nginx"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"nginx"}},"template":{"metadata":{"labels":{"app":"nginx"}},"spec":{"containers":[{"name":"nginx","image":"nginx:1.7.9","ports":[{"containerPort":80}]}]}}}}`).Do(context.Background())
 
 			// if bundlePath == "" {
