@@ -11,15 +11,12 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/wandb/server/cmds/wbs/deploy"
+	"github.com/wandb/server/pkg/crd"
 	"github.com/wandb/server/pkg/deployer"
 	"github.com/wandb/server/pkg/helm"
 	"github.com/wandb/server/pkg/helm/values"
-	"github.com/wandb/server/pkg/kubectl"
 	"github.com/wandb/server/pkg/utils"
 	"gopkg.in/yaml.v2"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func RootCmd() *cobra.Command {
@@ -120,10 +117,6 @@ func DownloadCmd() *cobra.Command {
 	return cmd
 }
 
-type Charts map[string]struct {
-	Binary string
-}
-
 func base64EncodeFile(filePath string) (string, error) {
 
 	fileContents, err := os.ReadFile(filePath)
@@ -156,10 +149,8 @@ func deployOperator(chartsDir string, namespace string, releaseName string) erro
 	operatorValues := values.Values{}
 	operatorValues.SetValue("airgapped", true)
 
-	operatorValues.SetValue("charts", Charts{
-		helm.WandbChart: {
-			Binary: wandbChartBinary,
-		},
+	operatorValues.SetValue("charts", map[string]string{
+		helm.WandbChart: wandbChartBinary,
 	})
 
 	deploy.DeployChart(namespace, releaseName, operatorChart, operatorValues.AsMap())
@@ -172,41 +163,6 @@ type LocalSpec struct {
 		Path string `json:"path" yaml:"path"`
 	} `json:"chart" yaml:"chart"`
 	Values values.Values `json:"values" yaml:"values"`
-}
-
-func applyWeightAndBiases(namespace string, vals values.Values) error {
-	_, cs, err := kubectl.GetClientset()
-	if err != nil {
-		return err
-	}
-
-	gvr := schema.GroupVersionResource{
-		Group:    "apps.wandb.com",
-		Version:  "v1",
-		Resource: "weightsandbiases",
-	}
-
-	localSpec := LocalSpec{
-		Chart: struct {
-			Path string `json:"path" yaml:"path"`
-		}{
-			Path: fmt.Sprintf("charts/%s", helm.WandbChart),
-		},
-		Values: vals,
-	}
-
-	localSpecJson, err := json.Marshal(localSpec)
-	if err != nil {
-		return err
-	}
-
-	var unstructuredSpec unstructured.Unstructured
-	if err := json.Unmarshal(localSpecJson, &unstructuredSpec); err != nil {
-		return err
-	}
-
-	_, err = cs.Resource(gvr).Namespace(namespace).Apply(context.Background(), "wandb", &unstructuredSpec, v1.ApplyOptions{})
-	return err
 }
 
 func DeployCmd() *cobra.Command {
@@ -252,17 +208,17 @@ func DeployCmd() *cobra.Command {
 				os.Exit(0)
 			}
 
-			if err := deployOperator(chartsDir, namespace, releaseName); err != nil {
+			if err := deployOperator(chartsDir, namespace, "operator"); err != nil {
 				fmt.Println("Error deploying operator:", err)
 				os.Exit(1)
 			}
 
-			if err := applyWeightAndBiases(namespace, vals); err != nil {
-				fmt.Println("Error deploying weightsandbiases:", err)
+			wb := crd.NewWeightsAndBiases("charts/"+helm.WandbChart, vals)
+
+			if err := crd.ApplyWeightsAndBiases(wb); err != nil {
+				fmt.Println("Error applying weightsandbiases:", err)
 				os.Exit(1)
 			}
-
-			// cs.AppsV1().RESTClient().Post().Resource("deployments").Namespace("default").Body(`{"apiVersion":"apps/v1","kind":"Deployment","metadata":{"name":"nginx"},"spec":{"replicas":3,"selector":{"matchLabels":{"app":"nginx"}},"template":{"metadata":{"labels":{"app":"nginx"}},"spec":{"containers":[{"name":"nginx","image":"nginx:1.7.9","ports":[{"containerPort":80}]}]}}}}`).Do(context.Background())
 
 			// if bundlePath == "" {
 			// 	bundlePath = "bundle/"
