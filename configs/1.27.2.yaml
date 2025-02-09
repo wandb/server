@@ -1,0 +1,21 @@
+dir: ./packages
+
+kubernetes:
+  version: 1.27.2
+  images:
+    - registry.k8s.io/kube-apiserver:v1.27.2
+    - registry.k8s.io/kube-controller-manager:v1.27.2
+    - registry.k8s.io/kube-proxy:v1.27.2
+    - registry.k8s.io/kube-scheduler:v1.27.2
+
+    - registry.k8s.io/coredns/coredns:v1.10.1
+    - registry.k8s.io/pause:3.9
+
+cni: 1.30
+containerd: 1.7.2
+crictl: 1.27.0
+flannel: 0.22.0
+helm: 3.12.0
+conntract: 1.4.6-2
+runc: 1.1.7
+contour: 1.25
