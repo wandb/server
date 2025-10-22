@@ -8,3 +8,9 @@ cert-issuer.yaml
 node_modules
 staging/*
 js/
+
+/install.sh
+assets
+logs
+packages/
+*.gz
