@@ -8,3 +8,5 @@ cert-issuer.yaml
 node_modules
 staging/*
 js/
+charts/*
+bundle/*
