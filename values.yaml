@@ -1,0 +1,5 @@
+global:
+  host: 'https://localhost.com'
+  bucket:
+    provider: 'google'
+    name: 'my-bucket'
